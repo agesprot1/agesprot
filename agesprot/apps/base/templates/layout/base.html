@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>AgesProt :: {{ title }}</title>
+		<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/metisMenu.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/sb-admin-2.css' %}">
+		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+		<link rel="stylesheet" href="{% static 'css/style.css' %}">
+	</head>
+	<body>
+		{% block content %}{% endblock content %}
+		<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"></div>
+		<script src="{% static 'js/jquery.min.js' %}"></script>
+		<script src="{% static 'js/bootstrap.min.js' %}"></script>
+		<script src="{% static 'js/metisMenu.min.js' %}"></script>
+		<script src="{% static 'js/sb-admin-2.js' %}"></script>
+		<script src="{% static 'js/template.js' %}"></script>
+		<script>{% block content_script %}{% endblock content_script %}</script>
+	</body>
+</html>

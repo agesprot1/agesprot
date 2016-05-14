@@ -1,0 +1,98 @@
+# -*- encoding: utf-8 -*-
+from .forms import *
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.views.generic.edit import FormView
+from django.shortcuts import render, render_to_response
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.template import loader
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.conf import settings
+from django.views.generic import *
+from .forms import PasswordResetRequestForm
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.db.models.query_utils import Q
+
+class ResetPasswordRequestView(FormView):
+	template_name = "users/password_reset_email.html"
+	success_url = '/users/response_message'
+	form_class = PasswordResetRequestForm
+
+	def get_context_data(self, **kwargs):
+		context = super(ResetPasswordRequestView, self).get_context_data(**kwargs)
+		context['title'] = 'Recuperación de cuenta'
+		return context
+
+	def post(self, request, *args, **kwargs):
+		form = self.form_class(request.POST)
+		if form.is_valid():
+			user_email = form.cleaned_data["user_email"]
+			try:
+				user = User.objects.get(email = user_email)
+				data = {
+					'email': user.email,
+					'domain': request.META['HTTP_HOST'],
+					'site_name': 'AgesProt',
+					'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+					'user': user,
+					'token': default_token_generator.make_token(user),
+					'protocol': 'http',
+				}
+				subject_template_name = 'email/txt/password_reset_subject.txt'
+				email_template_name = 'email/html/password_reset_subject.html'
+				subject = 'Cambio de Contraseña'
+				subject = ''.join(subject.splitlines())
+				email_txt = loader.render_to_string(subject_template_name, data)
+				email_html = loader.render_to_string(email_template_name, data)
+				send_mail(subject, email_html, settings.DEFAULT_FROM_EMAIL, [user.email])
+				result = self.form_valid(form)
+				messages.success(request, 'Un correo ha sido enviado ha ' +user_email+". Por favor verifica tu correo y sigue las instrucciones.")
+			except User.DoesNotExist:
+				result = self.form_invalid(form)
+				messages.warning(request, 'No hay una cuenta asociada con el correo electronico digitado.')
+		return result
+
+class PasswordResetConfirmView(FormView):
+	template_name = "users/password_reset_email.html"
+	success_url = '/users/response_message'
+	form_class = SetPasswordForm
+
+	def get_context_data(self, **kwargs):
+		context = super(PasswordResetConfirmView, self).get_context_data(**kwargs)
+		context['title'] = 'Recuperación de cuenta'
+		return context
+
+	@staticmethod
+	def validate_url(uidb64, token):
+		UserModel = get_user_model()
+		assert uidb64 is not None and token is not None
+		try:
+			uid = urlsafe_base64_decode(uidb64)
+			user = UserModel._default_manager.get(pk = uid)
+		except (TypeError, ValueError, OverflowError, UserModel.DoesNotExist):
+			user = None
+		return user
+
+	def post(self, request, uidb64 = None, token = None, *arg, **kwargs):
+		user = self.validate_url(uidb64, token)
+		form = self.form_class(request.POST)
+		if user is not None and default_token_generator.check_token(user, token):
+			if form.is_valid():
+				new_password = form.cleaned_data['new_password2']
+				user.set_password(new_password)
+				user.save()
+				messages.success(request, 'Cambio de contraseña exitoso.')
+				return self.form_valid(form)
+			else:
+				messages.warning(request, 'Ha ocurrido un error.')
+				return self.form_invalid(form)
+		else:
+			messages.warning(request, 'La URL no es válida.')
+			return HttpResponseRedirect(reverse('response_message'))
