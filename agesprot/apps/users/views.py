@@ -2,6 +2,7 @@
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, render_to_response
 from django.core.exceptions import ValidationError
@@ -124,6 +125,7 @@ class PasswordResetConfirmView(FormView):
 			messages.warning(request, 'La URL no es válida.')
 			return HttpResponseRedirect(reverse('response_message'))
 
+@permission_required('is_staff')
 def change_state_user(request):
 	user = request.GET.get('user')
 	state = True if request.GET.get('state') == 'true' else False
