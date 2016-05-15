@@ -6,3 +6,12 @@ $(document).on("click", ".open-modal", function(e){
 	});
 	return false;
 });
+function show_message(type, message){
+	Lobibox.notify(type, {
+		size: 'mini',
+		rounded: true,
+		delayIndicator: true,
+		msg: message,
+		sound: false
+	});
+}

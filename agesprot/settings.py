@@ -71,6 +71,13 @@ TEMPLATES = [
 	},
 ]
 
+AUTHENTICATION_BACKENDS = (
+	'agesprot.backends.EmailBackend',
+	'django.contrib.auth.backends.ModelBackend'
+)
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 WSGI_APPLICATION = 'agesprot.wsgi.application'
 
 # CONFIGURATION RESET PASSWORD
@@ -132,9 +139,9 @@ LOGIN_URL = '/users/login/'
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 

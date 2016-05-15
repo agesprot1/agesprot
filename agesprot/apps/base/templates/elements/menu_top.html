@@ -11,7 +11,7 @@
 	<ul class="nav navbar-top-links navbar-right">
 		<li class="dropdown">
 			<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-				<i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+				<i class="fa fa-user fa-fw"></i> {{ user.first_name }} <i class="fa fa-caret-down"></i>
 			</a>
 			<ul class="dropdown-menu dropdown-user">
 				<li>
@@ -48,6 +48,17 @@
 						</li>
 					</ul>
 				</li>
+				{% if user.is_superuser %}
+					<li>
+						<a href="#">
+							<i class="fa fa-cog fa-fw"></i> Configuración<span class="fa arrow"></span>
+						</a>
+						<ul class="nav nav-second-level">
+							<li><a href="{% url 'list_user' %}">Usuarios</a></li>
+							<li><a href="#">Roles de proyectos</a></li>
+						</ul>
+					</li>
+				{% endif %}
 			</ul>
 		</div>
 	</div>

@@ -1,24 +1,51 @@
 # -*- encoding: utf-8 -*-
-from .forms import *
-from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
-from django.views.generic.edit import FormView
-from django.shortcuts import render, render_to_response
-
-from django.contrib.auth import get_user_model
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template import loader
-from django.core.validators import validate_email
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.tokens import default_token_generator
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, render_to_response
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
-from django.conf import settings
-from django.views.generic import *
+from django.core.validators import validate_email
+from django.contrib.auth import get_user_model
+from django.views.generic.edit import FormView
+from django.views.generic.list import ListView
+from django.utils.encoding import force_bytes
+from django.core.urlresolvers import reverse
 from .forms import PasswordResetRequestForm
-from django.contrib import messages
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.template import loader
+from django.views.generic import *
+from django.conf import settings
+from .forms import *
+import json
+
+class UserListView(ListView):
+	template_name = 'users/list_user.html'
+	paginate_by = 10
+	model = User
+
+	def get_context_data(self, **kwargs):
+		context = super(UserListView, self).get_context_data(**kwargs)
+		context['title'] = 'Lista de usuarios'
+		return context
+
+class UserRegistrateView(FormView):
+	template_name = 'users/registrate.html'
+	form_class = RegistrateForm
+	success_url = '/users/registrate'
+
+	def get_context_data(self, **kwargs):
+		context = super(UserRegistrateView, self).get_context_data(**kwargs)
+		context['title'] = 'Registrate en AgesProt'
+		return context
+
+	def form_valid(self, form):
+		form.registrate_user()
+		messages.success(self.request, "Registro exitoso")
+		return super(UserRegistrateView, self).form_valid(form)
 
 class ResetPasswordRequestView(FormView):
 	template_name = "users/password_reset_email.html"
@@ -96,3 +123,24 @@ class PasswordResetConfirmView(FormView):
 		else:
 			messages.warning(request, 'La URL no es válida.')
 			return HttpResponseRedirect(reverse('response_message'))
+
+def change_state_user(request):
+	user = request.GET.get('user')
+	state = True if request.GET.get('state') == 'true' else False
+	response = {}
+	try:
+		user = User.objects.get(pk = user)
+		user.is_active = state
+		user.save()
+		response['type'] = 'success'
+		response['status'] = '1'
+		response['text'] = 'Activo'
+		response['msg'] = 'Estado cambiado'
+		response['state_label'] = 'false' if state is True else 'true'
+		response['type_label'] = 'success' if state is True else 'danger'
+		response['text_label'] = 'Activo' if state is True else 'Inactivo'
+	except User.DoesNotExist:
+		response['type'] = 'error'
+		response['status'] = '0'
+		response['msg'] = 'Usuario no encontrado'
+	return HttpResponse(json.dumps(response), "application/json")
