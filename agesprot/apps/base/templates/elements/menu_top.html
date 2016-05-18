@@ -41,10 +41,10 @@
 					</a>
 					<ul class="nav nav-second-level">
 						<li>
-							<a href="#" class="open-modal">Crear proyecto</a>
+							<a href="{% url 'new_project' %}">Crear proyecto</a>
 						</li>
 						<li>
-							<a href="#">Lista</a>
+							<a href="{% url 'list_project' %}">Lista</a>
 						</li>
 					</ul>
 				</li>
@@ -55,7 +55,7 @@
 						</a>
 						<ul class="nav nav-second-level">
 							<li><a href="{% url 'list_user' %}">Usuarios</a></li>
-							<li><a href="#">Roles de proyectos</a></li>
+							<li><a href="{% url 'list_roles_project' %}">Roles de proyectos</a></li>
 						</ul>
 					</li>
 				{% endif %}

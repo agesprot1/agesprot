@@ -10,16 +10,17 @@
 		<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
 		<link rel="stylesheet" href="{% static 'css/lobibox.css' %}">
 		<link rel="stylesheet" href="{% static 'css/style.min.css' %}">
-	</head>
-	<body>
-		{% block content %}{% endblock content %}
-		<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"></div>
 		<script src="{% static 'js/jquery.min.js' %}"></script>
 		<script src="{% static 'js/bootstrap.min.js' %}"></script>
 		<script src="{% static 'js/metisMenu.min.js' %}"></script>
 		<script src="{% static 'js/sb-admin-2.js' %}"></script>
 		<script src="{% static 'js/lobibox.js' %}"></script>
 		<script src="{% static 'js/template.js' %}"></script>
+		{% block content_head %}{% endblock content_head %}
+	</head>
+	<body>
+		{% block content %}{% endblock content %}
+		<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"></div>
 		<script>{% block content_script %}{% endblock content_script %}</script>
 	</body>
 </html>

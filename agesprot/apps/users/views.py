@@ -1,20 +1,21 @@
 # -*- encoding: utf-8 -*-
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, render_to_response
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import get_user_model
-from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
 from django.utils.encoding import force_bytes
 from django.core.urlresolvers import reverse
 from .forms import PasswordResetRequestForm
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
+from django.views.generic.edit import *
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.template import loader
@@ -23,34 +24,11 @@ from django.conf import settings
 from .forms import *
 import json
 
-class UserListView(ListView):
-	template_name = 'users/list_user.html'
-	paginate_by = 10
-	model = User
-
-	def get_context_data(self, **kwargs):
-		context = super(UserListView, self).get_context_data(**kwargs)
-		context['title'] = 'Lista de usuarios'
-		return context
-
-class UserRegistrateView(FormView):
-	template_name = 'users/registrate.html'
-	form_class = RegistrateForm
-	success_url = '/users/registrate'
-
-	def get_context_data(self, **kwargs):
-		context = super(UserRegistrateView, self).get_context_data(**kwargs)
-		context['title'] = 'Registrate en AgesProt'
-		return context
-
-	def form_valid(self, form):
-		form.registrate_user()
-		messages.success(self.request, "Registro exitoso")
-		return super(UserRegistrateView, self).form_valid(form)
+var_dir_template = 'users/'
 
 class ResetPasswordRequestView(FormView):
-	template_name = "users/password_reset_email.html"
-	success_url = '/users/response_message'
+	template_name = var_dir_template+'password_reset_email.html'
+	success_url = reverse_lazy('response_message')
 	form_class = PasswordResetRequestForm
 
 	def get_context_data(self, **kwargs):
@@ -88,8 +66,8 @@ class ResetPasswordRequestView(FormView):
 		return result
 
 class PasswordResetConfirmView(FormView):
-	template_name = "users/password_reset_email.html"
-	success_url = '/users/response_message'
+	template_name = var_dir_template+'password_reset_email.html'
+	success_url = reverse_lazy('response_message')
 	form_class = SetPasswordForm
 
 	def get_context_data(self, **kwargs):
@@ -125,6 +103,47 @@ class PasswordResetConfirmView(FormView):
 			messages.warning(request, 'La URL no es válida.')
 			return HttpResponseRedirect(reverse('response_message'))
 
+class UserListView(ListView):
+	template_name = var_dir_template+'list_user.html'
+	paginate_by = 10
+	model = User
+
+	def get_context_data(self, **kwargs):
+		context = super(UserListView, self).get_context_data(**kwargs)
+		context['title'] = 'Lista de usuarios'
+		return context
+
+class UserRegistrateView(FormView):
+	template_name = var_dir_template+'registrate.html'
+	form_class = UserForm
+	success_url = reverse_lazy('registrate')
+
+	def get_context_data(self, **kwargs):
+		context = super(UserRegistrateView, self).get_context_data(**kwargs)
+		context['title'] = 'Registrate en AgesProt'
+		return context
+
+	def form_valid(self, form):
+		form.registrate_user()
+		messages.success(self.request, "Registro exitoso")
+		return super(UserRegistrateView, self).form_valid(form)
+
+@permission_required('is_staff')
+def update_user(request, user_pk):
+	response = {}
+	user = get_object_or_404(User, pk = user_pk)
+	if request.method == 'POST':
+		form = UserUpdateForm(request.POST or None, request.FILES or None, instance = user)
+		if form.is_valid():
+			form.save()
+			messages.success(request, "Exito en la actualización")
+		else:
+			messages.error(request, "Error en la actualización")
+		return HttpResponseRedirect(reverse_lazy('list_user'))
+	else:
+		form = UserUpdateForm(instance = user)
+	return render(request, var_dir_template+'update.html', {'forms': form, 'user': user_pk, 'title': 'Edición de usuarios'})
+
 @permission_required('is_staff')
 def change_state_user(request):
 	user = request.GET.get('user')
@@ -144,5 +163,18 @@ def change_state_user(request):
 	except User.DoesNotExist:
 		response['type'] = 'error'
 		response['status'] = '0'
+		response['msg'] = 'Usuario no encontrado'
+	return HttpResponse(json.dumps(response), "application/json")
+
+@permission_required('is_staff')
+def delete_user(request, user):
+	response = {}
+	try:
+		user = User.objects.get(pk = user)
+		user.delete()
+		response['type'] = 'success'
+		response['msg'] = 'Exito al eliminar el usuario'
+	except User.DoesNotExist:
+		response['type'] = 'error'
 		response['msg'] = 'Usuario no encontrado'
 	return HttpResponse(json.dumps(response), "application/json")
