@@ -15,3 +15,6 @@ function show_message(type, message){
 		sound: false
 	});
 }
+$(document).ready(function() {
+	$('.table').DataTable();
+});

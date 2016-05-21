@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseRedirect, HttpResponse
+from django.core.urlresolvers import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
-from django.core.urlresolvers import reverse_lazy
 from django.views.generic.list import ListView
 from django.views.generic.edit import *
 from django.shortcuts import render
@@ -13,7 +13,7 @@ import json
 var_dir_template = 'project/'
 
 class NewProjectView(FormView):
-	template_name = var_dir_template+'new_project.html'
+	template_name = var_dir_template+'form-project.html'
 	success_url = reverse_lazy('list_project')
 	form_class = ProjectForm
 
@@ -29,25 +29,35 @@ class NewProjectView(FormView):
 
 class ListProjectView(ListView):
 	template_name = var_dir_template+'list_project.html'
-	paginate_by = 10
 	model = Proyecto
 
 	def get_context_data(self, **kwargs):
 		context = super(ListProjectView, self).get_context_data(**kwargs)
-		context['title'] = 'Lista de proyectos'
+		context['title'] = 'Mis proyectos creados'
 		return context
+
+	def get_queryset(self):
+		return Proyecto.objects.filter(user = self.request.user)
 
 class DetailProjectView(DetailView):
 	template_name = var_dir_template+'detail_project.html'
 	model = Proyecto
 
+	def get(self, request, **kwargs):
+		self.object = self.get_object()
+		if self.object.user != self.request.user:
+			return HttpResponseRedirect(reverse('home'))
+		context = self.get_context_data(object=self.object)
+		return self.render_to_response(context)
+
 	def get_context_data(self, **kwargs):
 		context = super(DetailProjectView, self).get_context_data(**kwargs)
+		data_project = Proyecto.objects.get(pk = self.kwargs['pk'])
+		context['title'] = 'Proyecto '+data_project.nombre_proyecto
 		return context
 
 class ListRolesProjectView(ListView):
 	template_name = var_dir_template+'list_roles_project.html'
-	paginate_by = 10
 	model = Project_role
 
 	def get_context_data(self, **kwargs):

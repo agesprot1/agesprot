@@ -4,18 +4,36 @@
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">{{ title }}</h4>
 		</div>
-		<form action="{% url 'update_user' user %}" method="POST">
+		<form action="{% url 'update_user' user_data %}?next={{ next_url }}" method="POST">
 			{% csrf_token %}
 			<div class="modal-body">
 				<div class="row">
-					{% for form in forms %}
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>{{ forms.first_name.label }}</label>
+							{{ forms.first_name }}
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>{{ forms.last_name.label }}</label>
+							{{ forms.last_name }}
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="form-group">
+							<label>{{ forms.email.label }}</label>
+							{{ forms.email }}
+						</div>
+					</div>
+					{% if user.is_superuser %}
 						<div class="col-md-12">
 							<div class="form-group">
-								<label>{{ form.label }}</label>
-								{{ form }}
+								<label>{{ forms.is_superuser.label }}</label>
+								{{ forms.is_superuser }}
 							</div>
 						</div>
-					{% endfor %}
+					{% endif %}
 				</div>
 			</div>
 			<div class="modal-footer">

@@ -1,12 +1,22 @@
 {% extends 'layout/base.html' %}
 
+{% load static %}
+
+{% block content_head %}
+	<link rel="stylesheet" href="{% static 'css/bootstrap.datetimepicker.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+	<script src="{% static 'js/moment.min.js' %}"></script>
+	<script src="{% static 'js/bootstrap.datetimepicker.min.js' %}"></script>
+	<script src="{% static 'js/datatables.min.js' %}"></script>
+{% endblock content_head %}
+
 {% block content %}
 	<div id="wrapper">
 		{% include 'elements/menu_top.html' %}
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">{{ title }}</h1>
+					<h1 class="page-header">{{ title }} <a href="{% url 'new_project' %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Crear proyecto</a></h1>
 				</div>
 			</div>
 			<div class="row">
@@ -14,42 +24,28 @@
 					<thead>
 						<tr>
 							<th>Nombre del proyecto</th>
-							<th>Descripción</th>
-							<th>Creado por</th>
 							<th>Fecha de inicio</th>
 							<th>Fecha final</th>
+							<th>Número de tareas</th>
+							<th>Número de integrantes</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for project in object_list %}
 							<tr>
 								<td>{{ project.nombre_proyecto }}</td>
-								<td>{{ project.descripcion }}</td>
-								<td>{{ project.user.first_name }}</td>
 								<td>{{ project.fecha_inicio }}</td>
 								<td>{{ project.fecha_final }}</td>
+								<td></td>
+								<td></td>
+								<td>
+									<a href="{% url 'project' project.pk %}" class="btn btn-success">Entrar</a>
+								</td>
 							</tr>
 						{% endfor %}
 					</tbody>
 				</table>
-				<nav>
-					<ul class="pager">
-						{% if page_obj.has_previous %}
-							<li>
-								<a href="?page={{ page_obj.previous_page_number }}" class="previous">
-									<span aria-hidden="true">&larr;</span> Anterior
-								</a>
-							</li>
-						{% endif %}
-						{% if page_obj.has_next %}
-							<li>
-								<a href="?page={{ page_obj.next_page_number }}" class="next">
-									<span aria-hidden="true">&rarr;</span> Siguiente
-								</a>
-							</li>
-						{% endif %}
-					</ul>
-				</nav>
 			</div>
 		</div>
 	</div>

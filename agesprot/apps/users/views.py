@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
+from django.contrib.auth.decorators import permission_required, login_required
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.decorators import permission_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -105,7 +105,6 @@ class PasswordResetConfirmView(FormView):
 
 class UserListView(ListView):
 	template_name = var_dir_template+'list_user.html'
-	paginate_by = 10
 	model = User
 
 	def get_context_data(self, **kwargs):
@@ -128,21 +127,25 @@ class UserRegistrateView(FormView):
 		messages.success(self.request, "Registro exitoso")
 		return super(UserRegistrateView, self).form_valid(form)
 
-@permission_required('is_staff')
+@login_required
 def update_user(request, user_pk):
 	response = {}
+	next_url = request.GET.get('next')
 	user = get_object_or_404(User, pk = user_pk)
 	if request.method == 'POST':
 		form = UserUpdateForm(request.POST or None, request.FILES or None, instance = user)
 		if form.is_valid():
-			form.save()
+			user_form = form.save(commit = False)
+			user_form.username = user_form.email
+			user_form.is_superuser = user_form.is_superuser if user_form.is_superuser != '' else user.is_superuser
+			user_form.save()
 			messages.success(request, "Exito en la actualización")
 		else:
 			messages.error(request, "Error en la actualización")
-		return HttpResponseRedirect(reverse_lazy('list_user'))
+		return HttpResponseRedirect(reverse_lazy(next_url))
 	else:
 		form = UserUpdateForm(instance = user)
-	return render(request, var_dir_template+'update.html', {'forms': form, 'user': user_pk, 'title': 'Edición de usuarios'})
+	return render(request, var_dir_template+'update.html', {'forms': form, 'user_data': user_pk, 'next_url': next_url, 'title': 'Edición de usuarios'})
 
 @permission_required('is_staff')
 def change_state_user(request):

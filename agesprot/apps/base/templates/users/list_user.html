@@ -2,6 +2,14 @@
 
 {% load staticfiles %}
 
+{% block content_head %}
+	<link rel="stylesheet" href="{% static 'css/bootstrap.datetimepicker.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+	<script src="{% static 'js/moment.min.js' %}"></script>
+	<script src="{% static 'js/bootstrap.datetimepicker.min.js' %}"></script>
+	<script src="{% static 'js/datatables.min.js' %}"></script>
+{% endblock content_head %}
+
 {% block content %}
 	<div id="wrapper">
 		{% include 'elements/menu_top.html' %}
@@ -46,9 +54,9 @@
 								</td>
 								<td>
 									{% if user.is_superuser %}
-										Administrador
+										<label class="label label-info">Administrador</label>
 									{% else %}
-										Normal
+										<label class="label label-warning">Normal</label>
 									{% endif %}
 								</td>
 								<td>
@@ -59,31 +67,13 @@
 									{% endif %}
 								</td>
 								<td>
-									<a href="{% url 'update_user' user.pk %}" class="btn btn-primary open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
+									<a href="{% url 'update_user' user.pk %}?next=list_user" class="btn btn-primary open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
 									<a href="{% url 'delete_user' user.pk %}" class="btn btn-danger delete" id="{{ user.pk }}">Eliminar</a>
 								</td>
 							</tr>
 						{% endfor %}
 					</tbody>
 				</table>
-				<nav>
-					<ul class="pager">
-						{% if page_obj.has_previous %}
-							<li>
-								<a href="?page={{ page_obj.previous_page_number }}" class="previous">
-									<span aria-hidden="true">&larr;</span> Anterior
-								</a>
-							</li>
-						{% endif %}
-						{% if page_obj.has_next %}
-							<li>
-								<a href="?page={{ page_obj.next_page_number }}" class="next">
-									<span aria-hidden="true">&rarr;</span> Siguiente
-								</a>
-							</li>
-						{% endif %}
-					</ul>
-				</nav>
 			</div>
 		</div>
 	</div>

@@ -1,5 +1,15 @@
 {% extends 'layout/base.html' %}
 
+{% load staticfiles %}
+
+{% block content_head %}
+	<link rel="stylesheet" href="{% static 'css/bootstrap.datetimepicker.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+	<script src="{% static 'js/moment.min.js' %}"></script>
+	<script src="{% static 'js/bootstrap.datetimepicker.min.js' %}"></script>
+	<script src="{% static 'js/datatables.min.js' %}"></script>
+{% endblock content_head %}
+
 {% block content %}
 	<div id="wrapper">
 		{% include 'elements/menu_top.html' %}
