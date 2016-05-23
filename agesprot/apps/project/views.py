@@ -1,12 +1,14 @@
 # -*- encoding: utf-8 -*-
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.views.generic.detail import DetailView
+from agesprot.apps.base.models import Tipo_role
 from django.views.generic.list import ListView
 from django.views.generic.edit import *
 from django.shortcuts import render
 from .models import *
+from .utils import *
 from .forms import *
 import json
 
@@ -29,6 +31,7 @@ class NewProjectView(FormView):
 
 class ListProjectView(ListView):
 	template_name = var_dir_template+'list_project.html'
+	paginate_by = 6
 	model = Proyecto
 
 	def get_context_data(self, **kwargs):
@@ -37,7 +40,7 @@ class ListProjectView(ListView):
 		return context
 
 	def get_queryset(self):
-		return Proyecto.objects.filter(user = self.request.user)
+		return Proyecto.objects.filter(user = self.request.user).order_by('estado')
 
 class DetailProjectView(DetailView):
 	template_name = var_dir_template+'detail_project.html'
@@ -45,58 +48,59 @@ class DetailProjectView(DetailView):
 
 	def get(self, request, **kwargs):
 		self.object = self.get_object()
-		if self.object.user != self.request.user:
-			return HttpResponseRedirect(reverse('home'))
+		verify = verify_user_project(self.object.pk, self.request.user)
 		context = self.get_context_data(object=self.object)
-		return self.render_to_response(context)
+		return self.render_to_response(context) if verify is True else HttpResponseRedirect(reverse('home'))
 
 	def get_context_data(self, **kwargs):
 		context = super(DetailProjectView, self).get_context_data(**kwargs)
 		data_project = Proyecto.objects.get(pk = self.kwargs['pk'])
 		context['title'] = 'Proyecto '+data_project.nombre_proyecto
+		context['project'] = data_project
 		return context
 
-class ListRolesProjectView(ListView):
-	template_name = var_dir_template+'list_roles_project.html'
-	model = Project_role
+@login_required
+def list_role(request, project):
+	project = Proyecto.objects.get(pk = project)
+	list_roles = Roles_project.objects.filter(proyecto = project)
+	verify = verify_user_project_administrator(project.pk, request.user.pk)
+	return render(request, var_dir_template+'list_roles_project.html', {'list_roles': list_roles, 'project': project, 'title': 'Lista de roles del proyecto '+project.nombre_proyecto}) if verify is True else HttpResponseRedirect(reverse('home'))
 
-	def get_context_data(self, **kwargs):
-		context = super(ListRolesProjectView, self).get_context_data(**kwargs)
-		context['title'] = 'Lista de Roles de projectos'
-		return context
-
-@permission_required('is_staff')
-def form_role(request, role_pk):
+@login_required
+def delete_role_role_from_project(request, user, project):
 	response = {}
-	try:
-		role = Project_role.objects.get(pk = role_pk)
-	except Project_role.DoesNotExist:
-		role = role_pk
+	verify = verify_user_project_administrator(project, request.user.pk)
+	if verify is True:
+		role_project = Roles_project.objects.get(user = user, proyecto = project)
+		role_project.delete()
+		response['type'] = 'success'
+		response['msg'] = 'Exito al eliminar el usuario'
+	else:
+		response['type'] = 'error'
+		response['msg'] = 'Ha ocurrido un error'
+	return HttpResponse(json.dumps(response), "application/json")
+
+@login_required
+def add_user_project(request, project):
+	project = Proyecto.objects.get(pk = project)
 	if request.method == 'POST':
-		form = RoleProjectForm(request.POST, instance = role)
+		response = {}
+		form = AddUserProjectForm(request.POST, instance = project)
 		if form.is_valid():
-			project_response = form.save()
+			project_data = form.save(commit = False)
+			project_data.proyecto = project
+			project_data.save()
+			response['user'] = project_data.user.first_name+" "+project_data.user.last_name
+			response['pk_user'] = project_data.user.pk
+			response['pk_project'] = project_data.proyecto.pk
+			response['role'] = project_data.role.nombre_role
+			response['pk'] = project_data.pk
 			response['type'] = 'success'
-			response['pk'] = project_response.pk
-			response['nombre_role'] = project_response.nombre_role
-			response['msg'] = 'Operación exitosa'
+			response['msg'] = 'Exito al agregar el usuario'
 		else:
 			response['type'] = 'error'
 			response['msg'] = 'Ha ocurrido un error'
 		return HttpResponse(json.dumps(response), "application/json")
 	else:
-		form = RoleProjectForm(instance = role)
-	return render(request, var_dir_template+'form-role.html', {'forms': form, 'role': role_pk, 'title': 'Roles de proyectos'})
-
-@permission_required('is_staff')
-def delete_role(request, role_pk):
-	response = {}
-	try:
-		role = Project_role.objects.get(pk = role_pk)
-		role.delete()
-		response['type'] = 'success'
-		response['msg'] = 'Exito al eliminar el rol'
-	except Project_role.DoesNotExist:
-		response['type'] = 'error'
-		response['msg'] = 'Rol no encontrado'
-	return HttpResponse(json.dumps(response), "application/json")
+		form = AddUserProjectForm(instance = project)
+	return render(request, var_dir_template+'add_user_project.html', {'forms': form, 'project_pk': project.pk, 'title': 'Agregar usuarios al proyecto'})

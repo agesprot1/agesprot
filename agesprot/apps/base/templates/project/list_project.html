@@ -4,10 +4,8 @@
 
 {% block content_head %}
 	<link rel="stylesheet" href="{% static 'css/bootstrap.datetimepicker.min.css' %}">
-	<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
 	<script src="{% static 'js/moment.min.js' %}"></script>
 	<script src="{% static 'js/bootstrap.datetimepicker.min.js' %}"></script>
-	<script src="{% static 'js/datatables.min.js' %}"></script>
 {% endblock content_head %}
 
 {% block content %}
@@ -20,32 +18,44 @@
 				</div>
 			</div>
 			<div class="row">
-				<table class="table table-striped table-bordered table-responsive table-hover">
-					<thead>
-						<tr>
-							<th>Nombre del proyecto</th>
-							<th>Fecha de inicio</th>
-							<th>Fecha final</th>
-							<th>Número de tareas</th>
-							<th>Número de integrantes</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for project in object_list %}
-							<tr>
-								<td>{{ project.nombre_proyecto }}</td>
-								<td>{{ project.fecha_inicio }}</td>
-								<td>{{ project.fecha_final }}</td>
-								<td></td>
-								<td></td>
-								<td>
-									<a href="{% url 'project' project.pk %}" class="btn btn-success">Entrar</a>
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+				{% for project in object_list %}
+					<div class="col-md-4">
+						<div class="thumbnail">
+							<img src="{% if project.estado.nombre_estado == 'Activo' %}{% static 'img/folder_active.png' %}{% else %}{% static 'img/folder_inactive.png' %}{% endif %}" alt="{{  project.nombre_proyecto}}" style="width: 100px;" class="text-center">
+							<div class="caption">
+								<h3>Proyecto {{ project.nombre_proyecto }}</h3>
+								<p>{{ project.descripcion }}</p>
+								<p>
+									<span class="label label-primary"><strong>12</strong> Integrantes</span>
+									<span class="label label-warning"><strong>32</strong> Tareas</span>
+								</p>
+								<div class="text-center">
+									{% if project.estado.nombre_estado == 'Activo' %}
+										<a href="{% url 'project' project.pk %}" class="btn btn-primary">Ingresar</a>
+									{% else %}
+										<p class="text-success">Proyecto finalizado</p>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+			<div class="row">
+				<nav>
+					<ul class="pager">
+						{% if page_obj.has_previous %}
+							<li class="previous">
+								<a href="?page={{ page_obj.previous_page_number }}"><span aria-hidden="true">&larr;</span> Anterior</a>
+							</li>
+						{% endif %}
+						{% if page_obj.has_next %}
+							<li class="next">
+								<a href="?page={{ page_obj.next_page_number }}">Siguiente <span aria-hidden="true">&rarr;</span></a>
+							</li>
+						{% endif %}
+					</ul>
+				</nav>
 			</div>
 		</div>
 	</div>

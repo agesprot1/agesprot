@@ -172,12 +172,8 @@ def change_state_user(request):
 @permission_required('is_staff')
 def delete_user(request, user):
 	response = {}
-	try:
-		user = User.objects.get(pk = user)
-		user.delete()
-		response['type'] = 'success'
-		response['msg'] = 'Exito al eliminar el usuario'
-	except User.DoesNotExist:
-		response['type'] = 'error'
-		response['msg'] = 'Usuario no encontrado'
+	user = User.objects.get(pk = user)
+	user.delete()
+	response['type'] = 'success'
+	response['msg'] = 'Exito al eliminar el usuario'
 	return HttpResponse(json.dumps(response), "application/json")

@@ -2,13 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.contrib.auth.models import User
-from agesprot.apps.base.models import Tipo_estado
-
-class Project_role(models.Model):
-	nombre_role = models.CharField(max_length = 45)
-
-	def __str__(self):
-		return self.nombre_role
+from agesprot.apps.base.models import Tipo_estado, Tipo_role
 
 class Proyecto(models.Model):
 	nombre_proyecto = models.CharField(max_length = 45)
@@ -23,3 +17,8 @@ class Proyecto(models.Model):
 
 	def __unicode__(self):
 		return self.nombre_proyecto
+
+class Roles_project(models.Model):
+	user = models.ForeignKey(User, blank = True, null = True)
+	proyecto = models.ForeignKey(Proyecto, blank = True, null = True)
+	role = models.ForeignKey(Tipo_role, blank = True, null = True)

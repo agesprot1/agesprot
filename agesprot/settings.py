@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 	'agesprot.apps.users',
 	'agesprot.apps.project',
 	'agesprot.apps.task',
+	'agesprot.apps.base.templatetags',
 ]
 
 MIDDLEWARE_CLASSES = [

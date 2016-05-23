@@ -13,3 +13,9 @@ class Tipo_prioridad(models.Model):
 
 	def __str__(self):
 		return self.nombre_prioridad
+
+class Tipo_role(models.Model):
+	nombre_role = models.CharField(max_length = 45)
+
+	def __str__(self):
+		return self.nombre_role

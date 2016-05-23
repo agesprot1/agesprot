@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 	<div class="navbar-header">
 		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -45,7 +47,7 @@
 							<a href="#">Mis tareas</a>
 						</li>
 						<li>
-							<a href="#">Todas las tareas</a>
+							<a href="{% url 'all_task_project' project=project.pk %}">Todas las tareas</a>
 						</li>
 					</ul>
 				</li>
@@ -54,6 +56,13 @@
 						<i class="fa fa-file-text fa-fw"></i> Documentos
 					</a>
 				</li>
+				{% if request.user.pk|verify_admin_project:project.pk %}
+					<li>
+						<a href="{% url 'list_role' project.pk %}">
+							<i class="fa fa-check-square fa-fw"></i> Asignar roles
+						</a>
+					</li>
+				{% endif %}
 				{% if user.is_superuser %}
 					{% include 'elements/menu_config_admin.html' %}
 				{% endif %}
