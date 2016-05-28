@@ -48,7 +48,7 @@ def form_role(request, role_pk):
 		return HttpResponse(json.dumps(response), "application/json")
 	else:
 		form = RoleProjectForm(instance = role)
-	return render(request, var_dir_template+'form-role.html', {'forms': form, 'role': role_pk, 'title': 'Roles de proyectos'})
+	return render(request, var_dir_template+'form_role.html', {'forms': form, 'role': role_pk, 'title': 'Roles de proyectos'})
 
 @permission_required('is_staff')
 def delete_role(request, role_pk):
@@ -84,7 +84,7 @@ def form_prioridad(request, prioridad_pk):
 		return HttpResponse(json.dumps(response), "application/json")
 	else:
 		form = PrioridadProjectForm(instance = prioridad)
-	return render(request, var_dir_template+'form-prioridad.html', {'forms': form, 'prioridad': prioridad_pk, 'title': 'prioridades de proyectos'})
+	return render(request, var_dir_template+'form_prioridad.html', {'forms': form, 'prioridad': prioridad_pk, 'title': 'prioridades de proyectos'})
 
 @permission_required('is_staff')
 def delete_prioridad(request, prioridad_pk):

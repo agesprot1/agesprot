@@ -27,7 +27,7 @@ import json
 var_dir_template = 'users/'
 
 class ResetPasswordRequestView(FormView):
-	template_name = var_dir_template+'password_reset_email.html'
+	template_name = var_dir_template+'form_password_reset_email.html'
 	success_url = reverse_lazy('response_message')
 	form_class = PasswordResetRequestForm
 
@@ -66,7 +66,7 @@ class ResetPasswordRequestView(FormView):
 		return result
 
 class PasswordResetConfirmView(FormView):
-	template_name = var_dir_template+'password_reset_email.html'
+	template_name = var_dir_template+'form_password_reset_email.html'
 	success_url = reverse_lazy('response_message')
 	form_class = SetPasswordForm
 
@@ -113,7 +113,7 @@ class UserListView(ListView):
 		return context
 
 class UserRegistrateView(FormView):
-	template_name = var_dir_template+'registrate.html'
+	template_name = var_dir_template+'form_registrate.html'
 	form_class = UserForm
 	success_url = reverse_lazy('registrate')
 
@@ -145,7 +145,7 @@ def update_user(request, user_pk):
 		return HttpResponseRedirect(reverse_lazy(next_url))
 	else:
 		form = UserUpdateForm(instance = user)
-	return render(request, var_dir_template+'update.html', {'forms': form, 'user_data': user_pk, 'next_url': next_url, 'title': 'Edición de usuarios'})
+	return render(request, var_dir_template+'form_update_user.html', {'forms': form, 'user_data': user_pk, 'next_url': next_url, 'title': 'Edición de usuarios'})
 
 @permission_required('is_staff')
 def change_state_user(request):

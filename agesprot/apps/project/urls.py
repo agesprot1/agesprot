@@ -9,5 +9,5 @@ urlpatterns = patterns('agesprot.apps.project.views',
 	url(r'^(?P<project>\d+)/list-role/$', 'list_role', name = 'list_role'),
 	url(r'^delete-from-list-role/(?P<user>\d+)/(?P<project>\d+)/$', 'delete_role_role_from_project', name = 'delete_role_role_from_project'),
 	url(r'^add-user-project/(?P<project>\d+)/$', 'add_user_project', name = 'add_user_project'),
-	url(r'^(?P<project>\d+)/tasks/', include('agesprot.apps.task.urls')),
+	url(r'^(?P<pk>\d+)/tasks/', include('agesprot.apps.task.urls')),
 )

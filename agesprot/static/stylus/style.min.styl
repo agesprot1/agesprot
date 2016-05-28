@@ -1,6 +1,11 @@
 red_color = #FF8C5B
 blue_color = #3498db
 
+box_shadow(args)
+	-webkit-box-shadow args
+	-moz-box-shadow args
+	box-shadow args
+
 .errorlist
 	color red_color
 	list-style none
@@ -16,3 +21,24 @@ blue_color = #3498db
 
 .login-panel
 	margin-top 20%
+
+.page
+	position relative
+	margin auto
+	padding 15px
+	color #212121
+	-webkit-border-bottom-left-radius 20px 500px
+	-webkit-border-bottom-right-radius 500px 30px
+	-webkit-border-top-right-radius 5px 100px
+	-moz-border-radius-bottomleft 20px 500px
+	-moz-border-radius-bottomright 500px 30px
+	-moz-border-radius-topright 5px 100px
+	border-radius-bottomleft 20px 500px
+	border-radius-bottomright 500px 30px
+	border-radius-topright 5px 100px
+	background #fcf59b
+	background -webkit-gradient(linear, left top, left bottom, from(#81cbbc), color-stop(2%, #fcf59b))
+	background -moz-repeating-linear-gradient(top, #fcf59b, #fcf59b 38px, #81cbbc 40px)
+	background repeating-linear-gradient(top, #fcf59b, #fcf59b 38px, #81cbbc 40px)
+	-webkit-background-size 100% 40px
+	box_shadow(0 2px 5px 1px rgba(0,0,0,.2))

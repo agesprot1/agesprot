@@ -6,7 +6,7 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</button>
-		<a href="{% url 'home' %}" class="navbar-brand">AgesProt v1.0</a>
+		<a href="{% url 'home' %}" class="navbar-brand url">AgesProt v1.0</a>
 	</div>
 	<ul class="nav navbar-top-links navbar-right">
 		<li class="dropdown">
@@ -15,10 +15,10 @@
 			</a>
 			<ul class="dropdown-menu dropdown-user">
 				<li>
-					<a href="{% url 'profile' %}"><i class="fa fa-user fa-fw"></i> Mi perfil</a>
+					<a href="{% url 'profile' %}" class="url"><i class="fa fa-user fa-fw"></i> Mi perfil</a>
 				</li>
 				<li>
-					<a href="{% url 'logout' %}"><i class="fa fa-sign-out fa-fw"></i> Cerrar sesión</a>
+					<a href="{% url 'logout' %}" class="url"><i class="fa fa-sign-out fa-fw"></i> Cerrar sesión</a>
 				</li>
 			</ul>
 		</li>
@@ -27,20 +27,20 @@
 		<div class="sidebar-nav navbar-collapse">
 			<ul class="nav" id="side-menu">
 				<li>
-					<a href="{% url 'home' %}">
+					<a href="{% url 'home' %}" class="url">
 						<i class="fa fa-dashboard fa-fw"></i> Inicio
 					</a>
 				</li>
 				<li>
-					<a href="{% url 'list_project' %}">
+					<a href="{% url 'list_project' %}" class="url">
 						<i class="fa fa-folder fa-fw"></i> Proyectos<span class="fa arrow"></span>
 					</a>
 					<ul class="nav nav-second-level">
 						<li>
-							<a href="{% url 'list_project' %}">Mis proyectos</a>
+							<a href="{% url 'list_project' %}" class="url">Mis proyectos</a>
 						</li>
 						<li>
-							<a href="#">Todos los proyectos</a>
+							<a href="#" class="url">Todos los proyectos</a>
 						</li>
 					</ul>
 				</li>

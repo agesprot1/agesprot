@@ -18,6 +18,9 @@
 				</div>
 			</div>
 			<div class="row">
+				{% for message in messages %}
+					<p class="alert alert-{{ message.tags }}">{{ message }}</p>
+				{% endfor %}
 				{% for project in object_list %}
 					<div class="col-md-4">
 						<div class="thumbnail">
@@ -26,8 +29,8 @@
 								<h3>Proyecto {{ project.nombre_proyecto }}</h3>
 								<p>{{ project.descripcion }}</p>
 								<p>
-									<span class="label label-primary"><strong>12</strong> Integrantes</span>
-									<span class="label label-warning"><strong>32</strong> Tareas</span>
+									<span class="label label-primary"><strong>{{ project.roles_project_set.count }}</strong> Integrantes</span>
+									<span class="label label-warning"><strong>{{ project.tarea_set.count }}</strong> Tareas</span>
 								</p>
 								<div class="text-center">
 									{% if project.estado.nombre_estado == 'Activo' %}

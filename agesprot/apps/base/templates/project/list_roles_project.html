@@ -43,6 +43,9 @@
 {% endblock content %}
 
 {% block content_script %}
+	$(document).ready(function() {
+		$('.table').DataTable();
+	});
 	$(document).on("click", ".delete", function(){
 		var id = $(this).attr('id');
 		$.get($(this).attr('href'), function(data){

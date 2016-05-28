@@ -1,11 +1,10 @@
 # -*- encoding: utf-8 -*-
 from django.contrib.auth.decorators import permission_required, login_required
+from django.views.generic import DetailView, ListView, CreateView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.views.generic.detail import DetailView
 from agesprot.apps.base.models import Tipo_role
-from django.views.generic.list import ListView
-from django.views.generic.edit import *
 from django.shortcuts import render
 from .models import *
 from .utils import *
@@ -14,9 +13,10 @@ import json
 
 var_dir_template = 'project/'
 
-class NewProjectView(FormView):
-	template_name = var_dir_template+'form-project.html'
+class NewProjectView(SuccessMessageMixin, CreateView):
+	template_name = var_dir_template+'form_project.html'
 	success_url = reverse_lazy('list_project')
+	success_message = 'Proyecto creado con exito.'
 	form_class = ProjectForm
 
 	def get_context_data(self, **kwargs):
@@ -26,7 +26,6 @@ class NewProjectView(FormView):
 
 	def form_valid(self, form):
 		form.instance.user = self.request.user
-		form.save()
 		return super(NewProjectView, self).form_valid(form)
 
 class ListProjectView(ListView):
@@ -103,4 +102,4 @@ def add_user_project(request, project):
 		return HttpResponse(json.dumps(response), "application/json")
 	else:
 		form = AddUserProjectForm(instance = project)
-	return render(request, var_dir_template+'add_user_project.html', {'forms': form, 'project_pk': project.pk, 'title': 'Agregar usuarios al proyecto'})
+	return render(request, var_dir_template+'form_add_user_project.html', {'forms': form, 'project_pk': project.pk, 'title': 'Agregar usuarios al proyecto'})

@@ -80,6 +80,9 @@
 {% endblock content %}
 
 {% block content_script %}
+	$(document).ready(function() {
+		$('.table').DataTable();
+	});
 	$('.delete').click(function(){
 		var id = $(this).attr('id');
 		$.get($(this).attr('href'), function(data){

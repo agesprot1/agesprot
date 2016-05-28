@@ -6,11 +6,21 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">{{ title }} <a href="{% url 'new_project' %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Crear tarea</a></h1>
+					<h1 class="page-header">{{ title }} <a href="{% url 'new_task' pk=project.pk %}" class="btn btn-success open-modal">Crear tarea</a></h1>
 				</div>
 			</div>
 			<div class="row">
-				
+				{% for task in project.tarea_set.all %}
+					<div class="col-md-4" id="task-{{ task.pk }}">
+						<div class="page">
+							<h2>{{ task.nombre_tarea }}</h2>
+							<p>{{ task.descripcion_tarea }}</p>
+							<a href="{% url 'list_integrant_task' pk=project.pk task=task.pk %}" class="open-modal" data-toggle="modal" data-target="#Modal">
+								<span class="label label-info">{{ task.tarea_integrante_set.count }} integrantes</span>
+							</a>
+						</div>
+					</div>
+				{% endfor %}
 			</div>
 		</div>
 	</div>

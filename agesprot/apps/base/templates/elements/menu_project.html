@@ -17,10 +17,10 @@
 			</a>
 			<ul class="dropdown-menu dropdown-user">
 				<li>
-					<a href="{% url 'profile' %}"><i class="fa fa-user fa-fw"></i> Mi perfil</a>
+					<a href="{% url 'profile' %}" class="url"><i class="fa fa-user fa-fw"></i> Mi perfil</a>
 				</li>
 				<li>
-					<a href="{% url 'logout' %}"><i class="fa fa-sign-out fa-fw"></i> Cerrar sesión</a>
+					<a href="{% url 'logout' %}" class="url"><i class="fa fa-sign-out fa-fw"></i> Cerrar sesión</a>
 				</li>
 			</ul>
 		</li>
@@ -29,36 +29,36 @@
 		<div class="sidebar-nav navbar-collapse">
 			<ul class="nav" id="side-menu">
 				<li>
-					<a href="{% url 'list_project' %}">
+					<a href="{% url 'list_project' %}" class="url">
 						<i class="fa fa-dashboard fa-fw"></i> Inicio
 					</a>
 				</li>
 				<li>
-					<a href="#">
+					<a href="#" class="url">
 						<i class="fa fa-users fa-fw"></i> Equipo
 					</a>
 				</li>
 				<li>
-					<a href="#">
+					<a href="#" class="url">
 						<i class="fa fa-briefcase fa-fw"></i> Tareas<span class="fa arrow"></span>
 					</a>
 					<ul class="nav nav-second-level">
 						<li>
-							<a href="#">Mis tareas</a>
+							<a href="#" class="url">Mis tareas</a>
 						</li>
 						<li>
-							<a href="{% url 'all_task_project' project=project.pk %}">Todas las tareas</a>
+							<a href="{% url 'all_task_project' pk=project.pk %}" class="url">Todas las tareas</a>
 						</li>
 					</ul>
 				</li>
 				<li>
-					<a href="#">
+					<a href="#" class="url">
 						<i class="fa fa-file-text fa-fw"></i> Documentos
 					</a>
 				</li>
 				{% if request.user.pk|verify_admin_project:project.pk %}
 					<li>
-						<a href="{% url 'list_role' project.pk %}">
+						<a href="{% url 'list_role' project.pk %}" class="url">
 							<i class="fa fa-check-square fa-fw"></i> Asignar roles
 						</a>
 					</li>
