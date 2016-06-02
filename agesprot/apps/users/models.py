@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class ProfileUser(models.Model):
 	user = models.OneToOneField(User, primary_key = True)
-	foto = models.ImageField(upload_to = 'img/users/')
+	foto = models.ImageField(upload_to = 'img/users/', blank = True, null = True)
 
 	def __str__(self):
 		return str(self.user)
