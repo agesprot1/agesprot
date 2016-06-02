@@ -4,19 +4,18 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import get_user_model
-from django.views.generic.list import ListView
 from django.utils.encoding import force_bytes
 from django.core.urlresolvers import reverse
 from .forms import PasswordResetRequestForm
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
-from django.views.generic.edit import *
-from django.core.mail import send_mail
+from mail_templated import send_mail
 from django.contrib import messages
 from django.template import loader
 from django.views.generic import *
@@ -49,15 +48,11 @@ class ResetPasswordRequestView(FormView):
 					'uid': urlsafe_base64_encode(force_bytes(user.pk)),
 					'user': user,
 					'token': default_token_generator.make_token(user),
-					'protocol': 'http',
+					'protocol': 'http://',
+					'subject': 'Cambio de Contraseña'
 				}
-				subject_template_name = 'email/txt/password_reset_subject.txt'
-				email_template_name = 'email/html/password_reset_subject.html'
-				subject = 'Cambio de Contraseña'
-				subject = ''.join(subject.splitlines())
-				email_txt = loader.render_to_string(subject_template_name, data)
-				email_html = loader.render_to_string(email_template_name, data)
-				send_mail(subject, email_html, settings.DEFAULT_FROM_EMAIL, [user.email])
+				email_template_name = 'email/password_reset_subject.html'
+				send_mail(email_template_name, data, settings.DEFAULT_FROM_EMAIL, [user.email])
 				result = self.form_valid(form)
 				messages.success(request, 'Un correo ha sido enviado ha ' +user_email+". Por favor verifica tu correo y sigue las instrucciones.")
 			except User.DoesNotExist:
@@ -112,10 +107,11 @@ class UserListView(ListView):
 		context['title'] = 'Lista de usuarios'
 		return context
 
-class UserRegistrateView(FormView):
+class UserRegistrateView(SuccessMessageMixin, FormView):
 	template_name = var_dir_template+'form_registrate.html'
+	success_message = 'Gracias por registrarse en AgesProt.'
+	success_url = reverse_lazy('login')
 	form_class = UserForm
-	success_url = reverse_lazy('registrate')
 
 	def get_context_data(self, **kwargs):
 		context = super(UserRegistrateView, self).get_context_data(**kwargs)
@@ -123,8 +119,7 @@ class UserRegistrateView(FormView):
 		return context
 
 	def form_valid(self, form):
-		form.registrate_user()
-		messages.success(self.request, "Registro exitoso")
+		form.save()
 		return super(UserRegistrateView, self).form_valid(form)
 
 @login_required
@@ -177,3 +172,30 @@ def delete_user(request, user):
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar el usuario'
 	return HttpResponse(json.dumps(response), "application/json")
+
+@login_required
+def change_password(request):
+	if request.method == 'POST':
+		response = {}
+		form = ChangePasswordForm(request.POST)
+		if form.is_valid():
+			old_password = form.cleaned_data['old_password']
+			new_password = form.cleaned_data['new_password']
+			re_new_password = form.cleaned_data['re_new_password']
+			if new_password == re_new_password:
+				saveuser = User.objects.get(pk = request.user.pk)
+				if request.user.check_password(old_password):
+					saveuser.set_password(new_password);
+					saveuser.save()
+					response['type'] = 'success'
+					response['msg'] = 'Cambio de contraseña exitoso.'
+				else:
+					response['type'] = 'error'
+					response['msg'] = 'Contraseña antigua errónea.'
+			else:
+				response['type'] = 'error'
+				response['msg'] = 'Contraseñas no coinciden.'
+		return HttpResponse(json.dumps(response), "application/json")
+	else:
+		form = ChangePasswordForm()
+	return render(request, var_dir_template+'form_password.html', {'forms': form, 'title': 'Cambiar mi contraseña'})

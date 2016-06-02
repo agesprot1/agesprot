@@ -37,6 +37,7 @@ INSTALLED_APPS = [
 	'django.contrib.sessions',
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
+	'mail_templated',
 	'agesprot.apps.base',
 	'agesprot.apps.users',
 	'agesprot.apps.project',
@@ -85,8 +86,8 @@ WSGI_APPLICATION = 'agesprot.wsgi.application'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'adriann.sanchez1@gmail.com'
-EMAIL_HOST_PASSWORD = 'ALKA3118491381'
+EMAIL_HOST_USER = 'agesprot1@gmail.com'
+EMAIL_HOST_PASSWORD = 'Agesprot.1'
 EMAIL_PORT = 587
 # END
 
@@ -100,6 +101,7 @@ DATABASES = {
 		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 	}
 }
+"""
 # LOCAL
 DATABASES = {
 	'default': {
@@ -122,6 +124,7 @@ DATABASES = {
 		'PORT': '5432'
 	}
 }
+"""
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 

@@ -5,7 +5,13 @@ from django.contrib.auth.models import User
 
 class ProfileUser(models.Model):
 	user = models.OneToOneField(User, primary_key = True)
-	foto = models.ImageField(upload_to = 'img/users/', default = 'img/none.png')
+	foto = models.ImageField(upload_to = 'img/users/')
 
 	def __str__(self):
 		return str(self.user)
+
+	def get_foto(self):
+		if self.foto and hasattr(self.foto, 'url'):
+			return self.foto.url
+		else:
+			return '/static/img/none.png'

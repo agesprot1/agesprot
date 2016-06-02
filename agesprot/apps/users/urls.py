@@ -14,6 +14,7 @@ urlpatterns = patterns('agesprot.apps.users.views',
 	url(r'^registrate/$', login_forbidden(UserRegistrateView.as_view()), name = 'registrate'),
 	url(r'^reset-password-confirm/(?P<uidb64>[0-9A-Za-z]+)-(?P<token>.+)/$', PasswordResetConfirmView.as_view(),name='reset_password_confirm'),
 	url(r'^reset-password', ResetPasswordRequestView.as_view(), name = "reset_password"),
+	url(r'^change-password/$', 'change_password', name = 'change_password'),
 	url(r'^user-profile/$', login_required(TemplateView.as_view(template_name = 'users/profile_user.html')), {'title': 'Mi perfil'}, name = 'profile'),
 	url(r'^response-message/$', TemplateView.as_view(template_name = 'users/response_message.html'), {'title': 'Bienvenido'}, name = 'response_message'),
 )

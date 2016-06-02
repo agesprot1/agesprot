@@ -12,7 +12,7 @@
 			<div class="row">
 				{% for task in project.tarea_set.all %}
 					<div class="col-md-4" id="task-{{ task.pk }}">
-						<div class="page">
+						<div class="page-task">
 							<h2>{{ task.nombre_tarea }}</h2>
 							<p>{{ task.descripcion_tarea }}</p>
 							<a href="{% url 'list_integrant_task' pk=project.pk task=task.pk %}" class="open-modal" data-toggle="modal" data-target="#Modal">

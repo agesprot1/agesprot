@@ -13,7 +13,7 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="content-head">
-					<h1>{{ title }}</h1>
+					<h1>{{ title }} <a href="{% url 'new_project' %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Crear proyecto</a></h1>
 				</div>
 			</div>
 			<div class="row" id="project-list">
@@ -21,6 +21,9 @@
 					<input type="text" class="search form-control" placeholder="Digite el nombre del proyecto a buscar">
 				</div>
 				<div class="list">
+				{% for message in messages %}
+					<div class="alert alert-{{ message.tags }}">{{ message }}</div>
+				{% endfor %}
 				{% for project in object_list %}
 					<div class="col-md-4">
 						<div class="thumbnail">
@@ -39,15 +42,14 @@
 										<p class="text-success">Proyecto finalizado</p>
 									{% endif %}
 								</div>
-								<p><strong>Creado por {{ project.user.first_name }}</strong></p>
 							</div>
 						</div>
 					</div>
 				{% empty %}
-					<div class="text-center">
+					<div class="text-center col-md-12">
 						<img src="{% static 'img/oops.png' %}" alt="{null" style="width: 150px;">
 						<h2>No hay registros.</h2>
-						<h4>Vaya, no se encontraron registros de proyectos creados.</h4>
+						<h4>Vaya, parece que aún no has creado un proyecto. Da click sobre el botón <a class="btn btn-default"><i class="glyphicon glyphicon-plus"></i> | Crear proyecto</a> ubicado en la parte superior o en la opción encontrada en el menú lateral.</h4>
 					</div>
 					<script>$('.search').prop('readonly', true)</script>
 				{% endfor %}

@@ -15,7 +15,7 @@ var_dir_template = 'project/'
 
 class NewProjectView(SuccessMessageMixin, CreateView):
 	template_name = var_dir_template+'form_project.html'
-	success_url = reverse_lazy('list_project')
+	success_url = reverse_lazy('my_list_project')
 	success_message = 'Proyecto creado con exito.'
 	form_class = ProjectForm
 
@@ -28,18 +28,31 @@ class NewProjectView(SuccessMessageMixin, CreateView):
 		form.instance.user = self.request.user
 		return super(NewProjectView, self).form_valid(form)
 
-class ListProjectView(ListView):
-	template_name = var_dir_template+'list_project.html'
+class ListProjectUserView(ListView):
+	template_name = var_dir_template+'list_project_user.html'
 	paginate_by = 6
 	model = Proyecto
 
 	def get_context_data(self, **kwargs):
-		context = super(ListProjectView, self).get_context_data(**kwargs)
+		context = super(ListProjectUserView, self).get_context_data(**kwargs)
 		context['title'] = 'Mis proyectos creados'
 		return context
 
 	def get_queryset(self):
 		return Proyecto.objects.filter(user = self.request.user).order_by('estado')
+
+class ListProjectView(ListView):
+	template_name = var_dir_template+'list_project.html'
+	model = Proyecto
+
+	def get_context_data(self, **kwargs):
+		context = super(ListProjectView, self).get_context_data(**kwargs)
+		context['title'] = 'Lista de todos los proyectos'
+		return context
+
+	def get_queryset(self):
+		queryset = Proyecto.objects.exclude(user = self.request.user).order_by('estado')
+		return queryset
 
 class DetailProjectView(DetailView):
 	template_name = var_dir_template+'detail_project.html'

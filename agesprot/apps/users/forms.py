@@ -39,9 +39,9 @@ class UserUpdateForm(forms.ModelForm):
 class UserForm(forms.Form):
 	first_name = forms.CharField(label = 'Nombres', widget = TextInput(attrs = {'class': 'form-control', 'maxlength': '30', 'required': True}))
 	last_name = forms.CharField(label = 'Apellidos', widget = TextInput(attrs = {'class': 'form-control', 'maxlength': '30', 'required': True}))
-	foto = forms.ImageField(label = 'Foto', required = True)
+	foto = forms.ImageField(label = 'Foto', required = False)
 	email = forms.EmailField(label = 'Correo electrónico', widget = forms.EmailInput(attrs = {'class': 'form-control', 'required': True}))
-	password = forms.CharField(label = 'Contraseña', widget = forms.PasswordInput(attrs = {'class': 'form-control', 'minlength': 8, 'required': True}))
+	password = forms.CharField(label = 'Contraseña', widget = forms.PasswordInput(attrs = {'class': 'form-control', 'minlength': 8, 'required': False}))
 	re_password = forms.CharField(label = 'Confirme contraseña', widget = forms.PasswordInput(attrs = {'class': 'form-control', 'minlength': 8, 'required': True}))
 	#type_user = forms.ChoiceField(label = 'Tipo de usuario', choices = [('0', 'Normal'), ('1', 'Administrador')], widget = Select(attrs = {'required': False, 'class': 'form-control'}))
 
@@ -64,7 +64,7 @@ class UserForm(forms.Form):
 			raise forms.ValidationError('Las contraseñas no coinciden.')
 		return re_password
 
-	def registrate_user(self):
+	def save(self):
 		first_name = self.cleaned_data.get('first_name')
 		last_name = self.cleaned_data.get('last_name')
 		username = self.cleaned_data.get('email')
@@ -78,3 +78,8 @@ class UserForm(forms.Form):
 		user.save()
 		profile = ProfileUser(user = user, foto = foto)
 		profile.save()
+
+class ChangePasswordForm(forms.Form):
+	old_password = forms.CharField(label = 'Contraseña antigua', widget = forms.PasswordInput(attrs = {'class': 'form-control', 'minlength': 8, 'required': True}))
+	new_password = forms.CharField(label = 'Contraseña nueva', widget = forms.PasswordInput(attrs = {'class': 'form-control', 'minlength': 8, 'required': True}))
+	re_new_password = forms.CharField(label = 'Confirme la contraseña', widget = forms.PasswordInput(attrs = {'class': 'form-control', 'minlength': 8, 'required': True}))

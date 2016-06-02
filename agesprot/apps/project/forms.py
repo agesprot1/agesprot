@@ -12,7 +12,7 @@ class ProjectForm(forms.ModelForm):
 		exclude = ('estado', 'user')
 		widgets = {
 			'nombre_proyecto': TextInput(attrs = {'class': 'form-control', 'maxlength': '45', 'required': True}),
-			'descripcion': TextInput(attrs = {'class': 'form-control', 'maxlength': '200', 'required': True}),
+			'descripcion': Textarea(attrs = {'rows': 5, 'class': 'form-control', 'maxlength': '200', 'required': True}),
 			'fecha_inicio': TextInput(attrs = {'class': 'form-control date_init', 'required': True}),
 			'fecha_final': TextInput(attrs = {'class': 'form-control date_end', 'required': True}),
 		}

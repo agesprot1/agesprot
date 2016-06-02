@@ -1,5 +1,13 @@
 {% extends 'layout/base.html' %}
 
+{% block content_head %}
+	<style>
+		body{
+			background-color: #f8f8f8;
+		}
+	</style>
+{% endblock content_head %}
+
 {% block content %}
 	<div class="container">
 		<div class="row">
@@ -10,7 +18,7 @@
 					</div>
 					<div class="panel-body">
 						{% for message in messages %}
-							<p class="alert alert-{{ message.tags }}">{{ message }}</p>
+							<p class="text-{{ message.tags }}">{{ message }}</p>
 						{% endfor %}
 						<form role="form" action="{% url 'registrate' %}" method="POST" enctype="multipart/form-data">
 							{% csrf_token %}

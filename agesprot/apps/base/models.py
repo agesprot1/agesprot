@@ -2,8 +2,15 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+class Tipo_estadoManager(models.Manager):
+	def crear_estado(self, nombre_estado):
+		estado = self.create(nombre_estado = nombre_estado)
+		return estado
+
 class Tipo_estado(models.Model):
 	nombre_estado = models.CharField(max_length = 45)
+
+	objects = Tipo_estadoManager()
 
 	def __str__(self):
 		return self.nombre_estado
@@ -19,3 +26,5 @@ class Tipo_role(models.Model):
 
 	def __str__(self):
 		return self.nombre_role
+
+estado = Tipo_estado.objects.crear_estado("Activo")
