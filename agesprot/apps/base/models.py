@@ -70,7 +70,6 @@ class Tipo_documento(models.Model):
 	def __unicode__(self):
 		return self.nombre_tipo
 
-"""
 estado = Tipo_estado.objects.crear_tipo_estado("Activo")
 estado = Tipo_estado.objects.crear_tipo_estado("Inactivo")
 estado = Tipo_estado.objects.crear_tipo_estado("Proceso")
@@ -79,4 +78,3 @@ documento = Tipo_documento.objects.crear_tipo_documento("PDF")
 documento = Tipo_documento.objects.crear_tipo_documento("Ofimatica")
 documento = Tipo_documento.objects.crear_tipo_documento("Imagen")
 role = Tipo_role.objects.crear_tipo_role("Administrador")
-"""
