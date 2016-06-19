@@ -26,6 +26,7 @@
 	</div>
 </div>
 <script>
+	$('#id_color_prioridad').colorpicker();
 	$("form").submit(function(event){
 		event.preventDefault();
 		var formData = new FormData(this);
@@ -39,11 +40,14 @@
 			processData: false,
 			success: function(data){
 				show_message(data.type, data.msg);
-				$('#'+data.pk).remove();
+				$('#object-'+data.pk).remove();
 				if(data.type == 'success'){
 					$('.table tbody').append(
-						"<tr id='"+data.pk+"'>"+
+						"<tr id='object-"+data.pk+"'>"+
 							"<td>"+data.nombre_prioridad+"</td>"+
+							"<td>"+
+								"<span style='width: 20px; height: 20px; background-color: "+data.color+"; display: block; border-radius: 200px 200px;'></span>"+
+							"</td>"+
 							"<td>"+
 								"<a href='/form-prioridad//"+data.pk+"' class='btn btn-primary open-modal' data-toggle='modal' data-target='#Modal'>Editar</a> <a href='/delete-prioridad/"+data.pk+"/' class='btn btn-danger delete' id='"+data.pk+"'>Eliminar</a>"+
 							"</td>"+

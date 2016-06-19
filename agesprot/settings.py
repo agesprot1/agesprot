@@ -41,8 +41,9 @@ INSTALLED_APPS = [
 	'agesprot.apps.base',
 	'agesprot.apps.users',
 	'agesprot.apps.project',
+	'agesprot.apps.activity',
 	'agesprot.apps.task',
-	'agesprot.apps.base.templatetags',
+	'agesprot.apps.project.templatetags',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -101,6 +102,7 @@ DATABASES = {
 		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 	}
 }
+"""
 # LOCAL
 DATABASES = {
 	'default': {
@@ -123,6 +125,7 @@ DATABASES = {
 		'PORT': '5432'
 	}
 }
+"""
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
@@ -141,7 +144,7 @@ AUTH_PASSWORD_VALIDATORS = [
 	},
 ]
 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/dashboard'
 
 LOGIN_URL = '/users/login/'
 

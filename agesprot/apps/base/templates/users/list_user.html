@@ -16,13 +16,13 @@
 					<h1>{{ title }}</h1>
 				</div>
 			</div>
+			{% for message in messages %}
+				<div class="row">
+					<div class="alert alert-{{ message.tags }} col-md-4 col-md-offset-4">{{ message }}</div>
+				</div>
+			{% endfor %}
 			<div class="row">
 				<div class="content">
-					{% if messages %}
-						{% for message in messages %}
-							<div class="alert alert-{{ message.tags }}">{{ message }}</div>
-						{% endfor %}
-					{% endif %}
 					<table class="table table-striped table-bordered table-responsive table-hover">
 						<thead>
 							<tr>
@@ -37,7 +37,7 @@
 						</thead>
 						<tbody>
 							{% for user in object_list %}
-								<tr id="list-user-{{ user.pk }}">
+								<tr id="object-{{ user.pk }}">
 									<td class="text-center">
 										<img src="{% static user.profileuser.get_foto %}" class="img-responsive img-rounded" style="width: 25px; display: inline-block;">
 									</td>
@@ -81,16 +81,6 @@
 {% block content_script %}
 	$(document).ready(function() {
 		$('.table').DataTable();
-	});
-	$('.delete').click(function(){
-		var id = $(this).attr('id');
-		$.get($(this).attr('href'), function(data){
-			show_message(data.type, data.msg);
-			if(data.type == 'success'){
-				$('#list-user-'+id).remove();
-			}
-		});
-		return false;
 	});
 	$('.change-state').click(function(){
 		var id = $(this).attr('id');

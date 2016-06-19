@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.conf.urls import patterns, url
 from .views import *
 
-login_forbidden = user_passes_test(lambda u: u.is_anonymous(), '/')
+login_forbidden = user_passes_test(lambda u: u.is_anonymous(), '/dashboard/')
 
 urlpatterns = patterns('agesprot.apps.users.views',
 	url(r'^list-user/$', permission_required('is_staff')(UserListView.as_view()), name = 'list_user'),

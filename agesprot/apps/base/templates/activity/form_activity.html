@@ -1,0 +1,35 @@
+<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">{{ title }}</h4>
+		</div>
+		<form role="form" action="{{ url }}" method="POST">
+			{% csrf_token %}
+			<div class="modal-body">
+				<div class="row">
+					{% for forms in form %}
+					<div class="form-group col-md-12">
+						<label>{{ forms.label }}</label>
+						{{ forms }}
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+				<input type="submit" value="Enviar" class="btn btn-success"/>
+			</div>
+		</form>
+	</div>
+</div>
+<script>
+	var date_init = new Date();
+	var date_end = new Date("{{ project.fecha_final|date:'Y/m/d' }}");
+	$('.date').datetimepicker({
+		format: 'YYYY-MM-DD',
+		useCurrent: false,
+		minDate: date_init,
+		maxDate: date_end
+	});
+</script>

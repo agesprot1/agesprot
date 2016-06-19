@@ -4,7 +4,7 @@
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">{{ title }}</h4>
 		</div>
-		<form role="form" action="{% url 'new_project' %}" method="POST">
+		<form role="form" action="{{ url }}" method="POST">
 			{% csrf_token %}
 			<div class="modal-body">
 				<div class="row">
@@ -40,10 +40,10 @@
 <script>
 	var date = new Date();
 	$('.date_init').datetimepicker({
-		format: 'DD/MM/YYYY'
+		format: 'YYYY-MM-DD'
 	});
 	$('.date_end').datetimepicker({
-		format: 'DD/MM/YYYY',
+		format: 'YYYY-MM-DD',
 		useCurrent: false
 	});
 	$(".date_init").on("dp.change", function (e) {

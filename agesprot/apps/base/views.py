@@ -53,14 +53,10 @@ def form_role(request, role_pk):
 @permission_required('is_staff')
 def delete_role(request, role_pk):
 	response = {}
-	try:
-		role = Tipo_role.objects.get(pk = role_pk)
-		role.delete()
-		response['type'] = 'success'
-		response['msg'] = 'Exito al eliminar el rol'
-	except Tipo_role.DoesNotExist:
-		response['type'] = 'error'
-		response['msg'] = 'Rol no encontrado'
+	role = Tipo_role.objects.get(pk = role_pk)
+	role.delete()
+	response['type'] = 'success'
+	response['msg'] = 'Exito al eliminar el rol'
 	return HttpResponse(json.dumps(response), "application/json")
 
 @permission_required('is_staff')
@@ -76,6 +72,7 @@ def form_prioridad(request, prioridad_pk):
 			project_response = form.save()
 			response['type'] = 'success'
 			response['pk'] = project_response.pk
+			response['color'] = project_response.color_prioridad
 			response['nombre_prioridad'] = project_response.nombre_prioridad
 			response['msg'] = 'Operación exitosa'
 		else:
@@ -89,12 +86,8 @@ def form_prioridad(request, prioridad_pk):
 @permission_required('is_staff')
 def delete_prioridad(request, prioridad_pk):
 	response = {}
-	try:
-		prioridad = Tipo_prioridad.objects.get(pk = prioridad_pk)
-		prioridad.delete()
-		response['type'] = 'success'
-		response['msg'] = 'Exito al eliminar la prioridad'
-	except Tipo_prioridad.DoesNotExist:
-		response['type'] = 'error'
-		response['msg'] = 'Prioridad no encontrada'
+	prioridad = Tipo_prioridad.objects.get(pk = prioridad_pk)
+	prioridad.delete()
+	response['type'] = 'success'
+	response['msg'] = 'Exito al eliminar la prioridad'
 	return HttpResponse(json.dumps(response), "application/json")

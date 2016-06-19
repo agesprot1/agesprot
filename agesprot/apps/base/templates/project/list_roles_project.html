@@ -2,9 +2,11 @@
 
 {% load staticfiles %}
 
+{% load project_filters %}
+
 {% block content_head %}
-	<link rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
-	<script src="{% static 'js/datatables.min.js' %}"></script>
+	<script src="{% static 'js/list.min.js' %}"></script>
+	<script src="{% static 'js/list.pagination.min.js' %}"></script>
 {% endblock content_head %}
 
 {% block content %}
@@ -12,48 +14,50 @@
 		{% include 'elements/menu_project.html' %}
 		<div id="page-wrapper">
 			<div class="row">
-				<div class="col-lg-12">
-					<h1 class="page-header">{{ title }} <a href="{% url 'add_user_project' project.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Agregar usuario</a></h1>
+				<div class="content-head">
+					<h1>
+						{{ title }}
+						{% if request.user.pk|verify_admin_project:project.pk %}
+							<a href="{% url 'add_user_project' project.pk %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Agregar usuario</a>
+						{% endif %}
+					</h1>
 				</div>
 			</div>
-			<div class="row">
-				<table class="table table-striped table-bordered table-responsive table-hover">
-					<thead>
-						<tr>
-							<th>Usuario</th>
-							<th>Rol</th>
-							<th>Acción</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for list_role in list_roles %}
-							<tr id="list-{{ list_role.pk }}">
-								<td>{{ list_role.user.first_name }} {{ list_role.user.last_name }}</td>
-								<td>{{ list_role.role.nombre_role }}</td>
-								<td>
-									<a href="{% url 'delete_role_role_from_project' list_role.user.pk list_role.proyecto.pk %}" class="btn btn-danger delete" id="{{ list_role.pk }}">Eliminar</a>
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+			<div class="row" id="project-list">
+				<div class="form-group col-md-6 col-md-offset-3">
+					<input type="text" class="search form-control" placeholder="Digite el nombre del proyecto a buscar">
+				</div>
+				<div class="list">
+					{% for list_role in list_roles %}
+						<div class="col-md-4 text-center" id="object-{{ list_role.pk }}">
+							<div class="thumbnail">
+								<img src="{% static list_role.user.profileuser.get_foto %}" alt="{{  project.nombre_proyecto}}" style="width: 100px;">
+								<div class="caption">
+									<h3 class="name">{{ list_role.user.profileuser.get_full_name }}</h3>
+									<p>{{ list_role.role.nombre_role }}</p>
+									{% if request.user.pk|verify_admin_project:project.pk and list_role.user != project.user %}
+										<p><a href="{% url 'delete_role_role_from_project' list_role.user.pk list_role.proyecto.pk %}" class="btn btn-danger delete" id="{{ list_role.pk }}">Eliminar</a></p>
+									{% endif %}
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+				<div class="col-md-12 text-center">
+					<ul class="pagination"></ul>
+				</div>
 			</div>
 		</div>
 	</div>
 {% endblock content %}
 
 {% block content_script %}
-	$(document).ready(function() {
-		$('.table').DataTable();
-	});
-	$(document).on("click", ".delete", function(){
-		var id = $(this).attr('id');
-		$.get($(this).attr('href'), function(data){
-			show_message(data.type, data.msg);
-			if(data.type == 'success'){
-				$('#list-'+id).remove();
-			}
-		});
-		return false;
-	});
+	var options = {
+		valueNames: ['name'],
+		page: 6,
+		plugins: [
+			ListPagination({})
+		]
+	};
+	var projectList = new List('project-list', options);
 {% endblock content_script %}

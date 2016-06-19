@@ -27,7 +27,7 @@
 						</thead>
 						<tbody>
 							{% for role in object_list %}
-								<tr id="{{ role.pk }}">
+								<tr id="object-{{ role.pk }}">
 									<td>{{ role.nombre_role }}</td>
 									<td>
 										<a href="{% url 'form_role' role.pk %}" class="btn btn-primary open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
@@ -46,15 +46,5 @@
 {% block content_script %}
 	$(document).ready(function() {
 		$('.table').DataTable();
-	});
-	$(document).on("click", ".delete", function(){
-		var id = $(this).attr('id');
-		$.get($(this).attr('href'), function(data){
-			show_message(data.type, data.msg);
-			if(data.type == 'success'){
-				$('#'+id).remove();
-			}
-		});
-		return false;
 	});
 {% endblock content_script %}

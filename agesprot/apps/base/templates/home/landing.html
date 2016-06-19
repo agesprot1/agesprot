@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>{{ title }}</title>
+	<link rel="stylesheet" href="{% static 'css/landing/bootstrap.css' %}">
+	<link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/landing/style.css' %}">
+	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,300">
+</head>
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top move-me" id="menu">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="{% url 'landing' %}" class="navbar-brand">
+					<img src="{% static 'img/logo.jpg' %}" alt="" class="logo-custom">
+				</a>
+			</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#home">Inicio</a></li>
+					<li><a href="#funciones">Funciones</a></li>
+					<li><a href="#experiencia">Experiencia</a></li>
+					<li><a href="#objetivos">Objetivos</a></li>
+					<li><a href="{% url 'login' %}">Ingresar</a></li>
+					<li><a href="{% url 'registrate' %}">Registrarme</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<section class="header-sec" id="home">
+		<div class="overlay">
+			<div class="container">
+				<div class="row text-center">
+					<h2 data-scroll-reveal="enter from the bottom after 0.1s">
+						<strong>AgesProt</strong>
+					</h2>
+					<h4 data-scroll-reveal="enter from the bottom after 0.8s" style="margin-bottom: 60px;">Mide el proceso de tu equipo de trabajo de la manera mas facil y sencilla para un buen desarrollo de tu proyecto.</h4>
+					<a href="{% url 'registrate' %}" class="btn btn-lg btn-success" data-scroll-reveal="enter from the bottom after 0.8s">Registrarme</a>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="features" id="funciones">
+		<div class="container">
+			<div class="row text-center">
+				<h3 data-scroll-reveal="enter from the bottom after 0.8s">Grandes Funciones</h3>
+			</div>
+			<div class="row text-center">
+				<div class="col-md-6">
+					<i class="fa fa-file-text-o" style="font-size: 70px;" data-scroll-reveal="enter from the bottom after 0.8s"></i>
+					<h4 data-scroll-reveal="enter from the bottom after 0.8s"><strong>Evalúa tu personal</strong></h4>
+					<p data-scroll-reveal="enter from the bottom after 0.8s">Mide el desempeño en tiempo de las actividades y tareas.</p>
+				</div>
+				<div class="col-md-6">
+					<i class="fa fa-group" style="font-size: 70px;" data-scroll-reveal="enter from the bottom after 0.8s"></i>
+					<h4 data-scroll-reveal="enter from the bottom after 0.8s"><strong>Participa de otros proyectos</strong></h4>
+					<p data-scroll-reveal="enter from the bottom after 0.8s">Se participe de otros proyectos y mira tu desempeño y el progreso.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="testi-sec" id="experiencia">
+		<div class="overlay">
+			<div class="container">
+				<div class="row text-center" >
+					<div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+						<h3 data-scroll-reveal="enter from the bottom after 0.1s">
+							<strong>Experiencia</strong>
+						</h3>
+						<p data-scroll-reveal="enter from the bottom after 0.8s">
+							Hablando de la innovación y el emprendimiento a partir de proyectos, es un tema bastante amplio que avanza a gran velocidad y por esto no cuenta con una estrategia precisa que garantice el éxito de un proyecto. Se busca generar un impacto en los pequeños y medianos emprendedores de la ciudad de Girardot, desarrollando una herramienta que permita llevar un control preciso del progreso de las tareas asignadas a un equipo de trabajo que integran un proyecto hasta su culminación facilitando la gestión de los proyectos y tareas de cada persona en el equipo.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="features" id="objetivos">
+		<div class="container">
+			<div class="row text-center">
+				<h3 data-scroll-reveal="enter from the bottom after 0.8s">Objetivos</h3>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<h4 data-scroll-reveal="enter from the bottom after 0.8s"><strong>General</strong></h4>
+					<p data-scroll-reveal="enter from the bottom after 0.8s">esarrollar un aplicativo web que permita a los pequeños y medianos emprendedores realizar una mejor gestión de su equipo a la hora de llevar a cabo un proyecto.(una referencia).</p>
+				</div>
+				<div class="col-md-6">
+					<h4 data-scroll-reveal="enter from the bottom after 0.8s"><strong>Especifico</strong></h4>
+					<ul data-scroll-reveal="enter from the bottom after 0.8s">
+						<li>Permitir a los usuarios generar proyectos para luego llevar un control más audaz en su desarrollo.</li>
+						<li>Facilitar la delegación de funciones a distintos usuarios que serán partícipes del proyecto por medio de las tareas que forman parte de este.</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</section>
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/landing/scrollReveal.js' %}"></script>
+	<script src="{% static 'js/landing/jquery.easing.min.js' %}"></script>
+	<script src="{% static 'js/landing/custom.js' %}"></script>
+</body>
+</html>

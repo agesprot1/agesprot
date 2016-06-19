@@ -39,10 +39,10 @@
 			processData: false,
 			success: function(data){
 				show_message(data.type, data.msg);
-				$('#'+data.pk).remove();
+				$('#object-'+data.pk).remove();
 				if(data.type == 'success'){
 					$('.table tbody').append(
-						"<tr id='"+data.pk+"'>"+
+						"<tr id='object-"+data.pk+"'>"+
 							"<td>"+data.nombre_role+"</td>"+
 							"<td>"+
 								"<a href='/form-role//"+data.pk+"' class='btn btn-primary open-modal' data-toggle='modal' data-target='#Modal'>Editar</a> <a href='/delete-role/"+data.pk+"/' class='btn btn-danger delete' id='"+data.pk+"'>Eliminar</a>"+

@@ -10,7 +10,8 @@ class Proyecto(models.Model):
 	fecha_inicio = models.DateField()
 	fecha_final = models.DateField()
 	estado = models.ForeignKey(Tipo_estado, default = 1)
-	user = models.ForeignKey(User, blank = True, null = True)
+	user = models.ForeignKey(User)
+	tag_url = models.CharField(max_length = 100)
 
 	def __str__(self):
 		return self.nombre_proyecto
@@ -19,6 +20,6 @@ class Proyecto(models.Model):
 		return self.nombre_proyecto
 
 class Roles_project(models.Model):
-	user = models.ForeignKey(User, blank = True, null = True)
-	proyecto = models.ForeignKey(Proyecto, blank = True, null = True)
-	role = models.ForeignKey(Tipo_role, blank = True, null = True)
+	user = models.ForeignKey(User)
+	proyecto = models.ForeignKey(Proyecto)
+	role = models.ForeignKey(Tipo_role)

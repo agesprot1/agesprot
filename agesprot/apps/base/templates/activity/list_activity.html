@@ -1,0 +1,82 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+
+{% load project_filters %}
+
+{% block content_head %}
+	<script src="{% static 'js/list.min.js' %}"></script>
+	<script src="{% static 'js/list.pagination.min.js' %}"></script>
+{% endblock content_head %}
+
+{% block content %}
+	<div id="wrapper">
+		{% include 'elements/menu_project.html' %}
+		<div id="page-wrapper">
+			<div class="row">
+				<div class="content-head">
+					<h1>
+						{{ title }}
+						{% if request.user.pk|verify_admin_project:project.pk %}
+							<a href="{% url 'new_activities' project.pk %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Crear actividad</a>
+						{% endif %}
+					</h1>
+				</div>
+			</div>
+			{% for message in messages %}
+				<div class="row">
+					<div class="alert alert-{{ message.tags }} col-md-4 col-md-offset-4">{{ message }}</div>
+				</div>
+			{% endfor %}
+			<div class="row" id="project-list">
+				<div class="form-group col-md-6 col-md-offset-3">
+					<input type="text" class="search form-control" placeholder="Digite el nombre de la actividad a buscar">
+				</div>
+				<div class="list">
+				{% for activity in object_list %}
+					<div class="col-md-4" id="object-{{ activity.pk }}">
+						<div class="thumbnail">
+							<div class="state text-center" style="background-color: {{ activity.prioridad.color_prioridad }};">
+								<p><strong>Prioridad: </strong>{{ activity.prioridad.nombre_prioridad }}</p>
+							</div>
+							<div class="caption">
+								<h3 class="name">{{ activity.nombre_actividad }}</h3>
+								<p>{{ activity.descripcion_actividad }}</p>
+								<p>
+									<span class="label label-primary"><strong>{{ activity.tarea_set.count }}</strong> Tareas</span>
+									<span class="label label-warning"><strong>{{ activity.actividad_role_set.count }}</strong> Integrantes</span>
+								</p>
+								{% if request.user.pk|verify_admin_project:project.pk %}
+									<a href="{% url 'update_activities' activity.pk project.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
+									<a href="{% url 'delete_activities' activity.pk %}" id="{{ activity.pk }}" class="btn btn-danger delete">Eliminar</a>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				{% empty %}
+					<div class="text-center col-md-12">
+						<img src="{% static 'img/oops.png' %}" alt="{null" style="width: 150px;">
+						<h2>No hay registros.</h2>
+						<h4>Vaya, no se encontraron registros de actividades creadas.</h4>
+					</div>
+					<script>$('.search').prop('readonly', true)</script>
+				{% endfor %}
+				</div>
+				<div class="col-md-12 text-center">
+					<ul class="pagination"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}
+
+{% block content_script %}
+	var options = {
+		valueNames: ['name'],
+		page: 6,
+		plugins: [
+			ListPagination({})
+		]
+	};
+	var projectList = new List('project-list', options);
+{% endblock content_script %}

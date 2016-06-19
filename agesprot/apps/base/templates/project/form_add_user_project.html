@@ -24,31 +24,3 @@
 		</form>
 	</div>
 </div>
-<script>
-	$("form").submit(function(){
-		var formData = new FormData(this);
-		$.ajax({
-			url: $(this).attr('action'),
-			type: $(this).attr('method'),
-			dataType: "json",
-			data: formData,
-			cache: false,
-			contentType: false,
-			processData: false,
-			success: function(data){
-				show_message(data.type, data.msg);
-				$('.table tbody').append(
-					"<tr id='list-"+data.pk+"'>"+
-						"<td>"+data.user+"</td>"+
-						"<td>"+data.role+"</td>"+
-						"<td>"+
-							"<a href='/project/delete-from-list-role/"+data.pk_user+"/"+data.pk_project+"/' class='btn btn-danger delete' id='"+data.pk+"'>Eliminar</a>"+
-						"</td>"+
-					"</tr>"
-					);
-				$('#Modal').modal('hide');
-			}
-		});
-		return false;
-	});
-</script>

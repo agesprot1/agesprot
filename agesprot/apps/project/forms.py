@@ -9,7 +9,7 @@ class ProjectForm(forms.ModelForm):
 	class Meta:
 		model = Proyecto
 		fields = '__all__'
-		exclude = ('estado', 'user')
+		exclude = ('estado', 'user', 'tag_url')
 		widgets = {
 			'nombre_proyecto': TextInput(attrs = {'class': 'form-control', 'maxlength': '45', 'required': True}),
 			'descripcion': Textarea(attrs = {'rows': 5, 'class': 'form-control', 'maxlength': '200', 'required': True}),
@@ -23,18 +23,26 @@ class ProjectForm(forms.ModelForm):
 			'fecha_final': 'Fecha de finalización',
 		}
 
+	def clean_tag_url(self):
+		nombre_proyecto = self.cleaned_data['nombre_proyecto']
+		data = nombre_proyecto.replace(' ', '-')
+		return data
+
+"""
 	def save(self):
 		nombre_proyecto = self.cleaned_data.get('nombre_proyecto')
 		descripcion = self.cleaned_data.get('descripcion')
 		fecha_inicio = self.cleaned_data.get('fecha_inicio')
 		fecha_final = self.cleaned_data.get('fecha_final')
+		tag_url = nombre_proyecto.replace(' ', '-')
 		user = User.objects.get(pk = self.instance.user.pk)
-		proyecto = Proyecto(nombre_proyecto = nombre_proyecto, descripcion = descripcion, fecha_inicio = fecha_inicio, fecha_final = fecha_final, user = user)
+		proyecto = Proyecto(nombre_proyecto = nombre_proyecto, tag_url = tag_url, descripcion = descripcion, fecha_inicio = fecha_inicio, fecha_final = fecha_final, user = user)
 		proyecto.save()
 		role = Tipo_role.objects.get(nombre_role = "Administrador")
 		project_role = Roles_project(user = user, proyecto = proyecto, role = role)
 		project_role.save()
 		return proyecto
+"""
 
 class AddUserProjectForm(forms.ModelForm):
 	class Meta:

@@ -6,6 +6,36 @@ $(document).on("click", ".open-modal", function(e){
 	});
 	return false;
 });
+$(document).on("click", ".delete", function(){
+	var id = $(this).attr('id');
+	var href = $(this).attr('href');
+	Lobibox.alert('info', {
+		title: "Alerta",
+		msg: "¿Desea eliminar el objecto seleccionado?",
+		buttons:{
+			yes: {
+				'class': 'btn btn-warning'
+			},
+			no: {
+				'class': 'btn btn-primary'
+			}
+		},
+		callback: function(lobibox, type){
+			if(type == 'yes'){
+				$.get(href, function(data){
+					show_message(data.type, data.msg);
+					if(data.type == 'success'){
+						$('#object-'+id).remove();
+					}
+				});
+			}
+			else{
+				show_message('success', 'Cancelado por el usuario');
+			}
+		}
+	});
+	return false;
+});
 function show_message(type, message){
 	Lobibox.notify(type, {
 		size: 'mini',
@@ -34,3 +64,6 @@ $(window).on("popstate", function(e) {
 		return original.apply(this, arguments);
 	};
 })(history.pushState);
+setTimeout(function(){
+	$('.alert').remove();
+}, 5000);

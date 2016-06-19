@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% load project_filters %}
+
 {% block content_head %}
 	<script src="{% static 'js/list.min.js' %}"></script>
 	<script src="{% static 'js/list.pagination.min.js' %}"></script>
@@ -13,33 +15,42 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="content-head">
-					<h1>{{ title }}</h1>
+					<h1>{{ title }} <a href="{% url 'new_project' %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Crear proyecto</a></h1>
 				</div>
 			</div>
+			{% for message in messages %}
+				<div class="row">
+					<div class="alert alert-{{ message.tags }} col-md-4 col-md-offset-4">{{ message }}</div>
+				</div>
+			{% endfor %}
 			<div class="row" id="project-list">
 				<div class="form-group col-md-6 col-md-offset-3">
 					<input type="text" class="search form-control" placeholder="Digite el nombre del proyecto a buscar">
 				</div>
 				<div class="list">
 				{% for project in object_list %}
-					<div class="col-md-4">
+					<div class="col-md-4" id="object-{{ project.pk }}">
 						<div class="thumbnail">
+							<br>
 							<img src="{% if project.estado.nombre_estado == 'Activo' %}{% static 'img/folder_active.png' %}{% else %}{% static 'img/folder_inactive.png' %}{% endif %}" alt="{{  project.nombre_proyecto}}" style="width: 100px;" class="text-center">
 							<div class="caption">
 								<h3 class="name">Proyecto {{ project.nombre_proyecto }}</h3>
 								<p>{{ project.descripcion }}</p>
 								<p>
 									<span class="label label-primary"><strong>{{ project.roles_project_set.count }}</strong> Integrantes</span>
-									<span class="label label-warning"><strong>{{ project.tarea_set.count }}</strong> Tareas</span>
+									<span class="label label-warning"><strong>{{ project.actividad_set.count }}</strong> Actividades</span>
 								</p>
 								<div class="text-center">
 									{% if project.estado.nombre_estado == 'Activo' %}
-										<a href="{% url 'project' project.pk %}" class="btn btn-primary">Ingresar</a>
+										<a href="{% url 'project' project.pk project.tag_url %}" class="btn btn-primary">Ingresar</a>
 									{% else %}
 										<p class="text-success">Proyecto finalizado</p>
 									{% endif %}
+									{% if request.user.pk|verify_admin_project:project.pk %}
+										<a href="{% url 'update_project' project.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
+										<a href="{% url 'delete_project' project.pk %}" id="{{ project.pk }}" class="btn btn-danger delete">Eliminar</a>
+									{% endif %}
 								</div>
-								<p><strong>Creado por {{ project.user.first_name }}</strong></p>
 							</div>
 						</div>
 					</div>

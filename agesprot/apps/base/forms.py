@@ -19,8 +19,9 @@ class PrioridadProjectForm(forms.ModelForm):
 		model = Tipo_prioridad
 		fields = '__all__'
 		widgets = {
-			'nombre_prioridad': TextInput(attrs = {'class': 'form-control', 'maxlength': '45'})
+			'nombre_prioridad': TextInput(attrs = {'class': 'form-control', 'maxlength': '45', 'required': True}),
+			'color_prioridad': TextInput(attrs = {'class': 'form-control', 'required': True})
 		}
 		labels = {
-			'nombre_prioridad': 'Nombre de la prioridad'
+			'color_prioridad': 'Color'
 		}
