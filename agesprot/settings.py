@@ -102,7 +102,7 @@ DATABASES = {
 		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 	}
 }
-"""
+
 # LOCAL
 DATABASES = {
 	'default': {
@@ -118,14 +118,13 @@ DATABASES = {
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.postgresql_psycopg2',
-		'NAME': 'de1k9jj0545kfr',
-		'USER': 'yxjeekgezzvhzn',
-		'PASSWORD': 'nGEhMH8n1eBuG__aHPRRefqLnk',
-		'HOST': 'ec2-54-243-248-181.compute-1.amazonaws.com',
+		'NAME': 'd263b094gddtj',
+		'USER': 'lprhehqrpyfzrs',
+		'PASSWORD': 'BpKbhvVzip_5LaJP1kLlXVvyy7',
+		'HOST': 'ec2-50-19-219-148.compute-1.amazonaws.com',
 		'PORT': '5432'
 	}
 }
-"""
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
