@@ -18,7 +18,7 @@
 					<h1>
 						{{ title }}
 						{% if request.user.pk|verify_admin_project:project.pk %}
-							<a href="{% url 'add_user_project' project.pk %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Agregar usuario</a>
+							<a href="{% url 'add_user_project' project.pk project.tag_url %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Agregar usuario</a>
 						{% endif %}
 					</h1>
 				</div>
@@ -30,13 +30,13 @@
 				<div class="list">
 					{% for list_role in list_roles %}
 						<div class="col-md-4 text-center" id="object-{{ list_role.pk }}">
-							<div class="thumbnail">
+							<div class="thumbnail content-square">
 								<img src="{% static list_role.user.profileuser.get_foto %}" alt="{{  project.nombre_proyecto}}" style="width: 100px;">
 								<div class="caption">
 									<h3 class="name">{{ list_role.user.profileuser.get_full_name }}</h3>
 									<p>{{ list_role.role.nombre_role }}</p>
 									{% if request.user.pk|verify_admin_project:project.pk and list_role.user != project.user %}
-										<p><a href="{% url 'delete_role_role_from_project' list_role.user.pk list_role.proyecto.pk %}" class="btn btn-danger delete" id="{{ list_role.pk }}">Eliminar</a></p>
+										<p><a href="{% url 'delete_role_role_from_project' list_role.proyecto.pk list_role.proyecto.tag_url list_role.user.pk %}" class="btn btn-danger delete" id="{{ list_role.pk }}">Eliminar</a></p>
 									{% endif %}
 								</div>
 							</div>

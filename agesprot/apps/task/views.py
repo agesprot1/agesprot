@@ -38,7 +38,3 @@ class NewTaskView(SuccessMessageMixin, CreateView):
 
 	def get_success_url(self):
 		return reverse('all_task_project', kwargs = {'pk': self.kwargs['pk']})
-
-def list_integrant_task(request, *args, **kwargs):
-	task_integrant = Tarea.objects.get(pk = kwargs['task'])
-	return render(request, var_dir_template+'list_task_integrant.html', {'task_integrant': task_integrant, 'title': 'Integrantes de la tarea '+task_integrant.nombre_tarea})

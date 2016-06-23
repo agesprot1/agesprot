@@ -1,0 +1,70 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+
+{% load project_filters %}
+
+{% block content %}
+	<div id="wrapper">
+		{% include 'elements/menu_project.html' %}
+		<div id="page-wrapper">
+			<div class="row">
+				<div class="content-head">
+					<h1>
+						{{ title }}
+					</h1>
+				</div>
+			</div>
+			{% for message in messages %}
+				<div class="row">
+					<div class="alert alert-{{ message.tags }} col-md-4 col-md-offset-4">{{ message }}</div>
+				</div>
+			{% endfor %}
+			<div class="row">
+				<div class="col-md-8">
+					<div class="col-md-12 content">
+						<h2>{{ object.nombre_actividad }}</h2>
+						<p>{{ object.descripcion_actividad }}</p>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="col-md-12 content">
+						<h3>Usuarios en la actividad</h3>
+						<div class="row">
+							{% for participant in object.actividad_role_set.all %}
+								<div class="col-md-12" id="object-{{ participant.pk }}" style="margin-bottom: 10px;">
+									<div class="col-md-3">
+										<img src="{% static participant.role.user.profileuser.get_foto %}" class="img-circle" style="width: 50px;">
+									</div>
+									<div class="col-md-7">
+										<p>
+											<strong>
+												<small>{{ participant.role.user.profileuser.get_full_name }}</small>
+											</strong><br>
+											<small>{{ participant.role.role }}</small>
+										</p>
+									</div>
+									<div class="col-md-1">
+										<a href="{% url 'delete_user_activity' project.pk project.tag_url object.pk participant.pk %}" class="btn btn-danger delete" id="{{ participant.pk }}">
+											<i class="glyphicon glyphicon-remove"></i>
+										</a>
+									</div>
+								</div>
+							{% empty %}
+								<p>
+									<strong>No hay usuarios</strong>
+								</p>
+							{% endfor %}
+							<div class="col-md-12 text-center">
+								<a href="{% url 'add_user_activity' project.pk project.tag_url object.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Agregar usuario</a>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-12 content">
+						<h3>Tareas</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

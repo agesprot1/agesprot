@@ -18,7 +18,7 @@
 					<h1>
 						{{ title }}
 						{% if request.user.pk|verify_admin_project:project.pk %}
-							<a href="{% url 'new_activities' project.pk %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Crear actividad</a>
+							<a href="{% url 'new_activities' project.pk project.tag_url %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Crear actividad</a>
 						{% endif %}
 					</h1>
 				</div>
@@ -46,9 +46,10 @@
 									<span class="label label-primary"><strong>{{ activity.tarea_set.count }}</strong> Tareas</span>
 									<span class="label label-warning"><strong>{{ activity.actividad_role_set.count }}</strong> Integrantes</span>
 								</p>
+								<a href="{% url 'detail_activities' project.pk project.tag_url activity.pk %}" class="btn btn-primary">Ingresar</a>
 								{% if request.user.pk|verify_admin_project:project.pk %}
-									<a href="{% url 'update_activities' activity.pk project.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
-									<a href="{% url 'delete_activities' activity.pk %}" id="{{ activity.pk }}" class="btn btn-danger delete">Eliminar</a>
+									<a href="{% url 'update_activities' project.pk project.tag_url activity.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
+									<a href="{% url 'delete_activities' project.pk project.tag_url activity.pk %}" id="{{ activity.pk }}" class="btn btn-danger delete">Eliminar</a>
 								{% endif %}
 							</div>
 						</div>

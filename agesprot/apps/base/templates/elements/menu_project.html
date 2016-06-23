@@ -14,17 +14,9 @@
 					</a>
 				</li>
 				<li>
-					<a href="#" class="url color-ca">
-						<i class="fa fa-briefcase fa-fw"></i> Gestión<span class="fa arrow"></span>
+					<a href="{% url 'list_activities' project.pk project.tag_url %}" class="url color-ca">
+						<i class="fa fa-briefcase fa-fw"></i> Actividades
 					</a>
-					<ul class="nav nav-second-level">
-						<li>
-							<a href="{% url 'list_activities' project.pk project.tag_url %}" class="url color-ca">Todas las actividades</a>
-						</li>
-						<li>
-							<a href="#" class="url color-ca">Actividades asociadas</a>
-						</li>
-					</ul>
 				</li>
 				<li>
 					<a href="{% url 'list_role' project.pk project.tag_url %}" class="url color-ca">

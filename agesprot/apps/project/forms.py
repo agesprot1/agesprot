@@ -28,22 +28,6 @@ class ProjectForm(forms.ModelForm):
 		data = nombre_proyecto.replace(' ', '-')
 		return data
 
-"""
-	def save(self):
-		nombre_proyecto = self.cleaned_data.get('nombre_proyecto')
-		descripcion = self.cleaned_data.get('descripcion')
-		fecha_inicio = self.cleaned_data.get('fecha_inicio')
-		fecha_final = self.cleaned_data.get('fecha_final')
-		tag_url = nombre_proyecto.replace(' ', '-')
-		user = User.objects.get(pk = self.instance.user.pk)
-		proyecto = Proyecto(nombre_proyecto = nombre_proyecto, tag_url = tag_url, descripcion = descripcion, fecha_inicio = fecha_inicio, fecha_final = fecha_final, user = user)
-		proyecto.save()
-		role = Tipo_role.objects.get(nombre_role = "Administrador")
-		project_role = Roles_project(user = user, proyecto = proyecto, role = role)
-		project_role.save()
-		return proyecto
-"""
-
 class AddUserProjectForm(forms.ModelForm):
 	class Meta:
 		model = Roles_project

@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from agesprot.apps.base.models import Tipo_estado, Tipo_prioridad
+from agesprot.apps.project.models import Roles_project
 from django.forms import *
 from django import forms
 from .models import *
@@ -30,3 +31,21 @@ class ActivitieForm(forms.ModelForm):
 		super(ActivitieForm, self).__init__(*args, **kwargs)
 		self.fields['estado'] = forms.ChoiceField(label = "Estado", choices = [('', 'Seleccione un estado')]+[(x.pk, x.nombre_estado) for x in Tipo_estado.objects.all()], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))
 		self.fields['prioridad'] = forms.ChoiceField(label = "Prioridad", choices = [('', 'Seleccione un prioridad')]+[(x.pk, x.nombre_prioridad) for x in Tipo_prioridad.objects.all()], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))
+
+class UserRoleForm(forms.ModelForm):
+	class Meta:
+		model = Actividad_role
+		fields = '__all__'
+		exclude = ['actividad']
+		labels = {
+			'role': 'Usuario'
+		}
+
+	def clean_role(self):
+		return Roles_project.objects.get(pk = self.cleaned_data.get('role'))
+
+	def __init__(self, *args, **kwargs):
+		actividad = Actividad.objects.get(pk = kwargs.pop('actividad', None))
+		user_list = [x.role.pk for x in Actividad_role.objects.filter(actividad = actividad.pk)]
+		super(UserRoleForm, self).__init__(*args, **kwargs)
+		self.fields['role'] = forms.ChoiceField(label = "Usuario", choices = [('', 'Seleccione un usuario')]+[(x.pk, x.user.first_name+" "+x.user.last_name) for x in Roles_project.objects.exclude(pk__in = user_list).distinct()], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))

@@ -45,7 +45,7 @@ class UpdateProjectView(SuccessMessageMixin, UpdateView):
 	def get_context_data(self, **kwargs):
 		context = super(UpdateProjectView, self).get_context_data(**kwargs)
 		context['title'] = 'Editar proyecto'
-		context['url'] = '/project/update-project/'+self.kwargs['pk']+'/'
+		context['url'] = '/project/update-project/'+self.kwargs['pk']+'/'+self.kwargs['tag_url']+'/'
 		return context
 
 	def form_valid(self, form):
@@ -104,11 +104,20 @@ def list_role(request, pk, tag_url):
 	return render(request, var_dir_template+'list_roles_project.html', {'list_roles': list_roles, 'project': project, 'title': 'Lista de roles del proyecto '+project.nombre_proyecto})
 
 @login_required
-def delete_role_role_from_project(request, user, project):
+def delete_project(request, pk, tag_url):
 	response = {}
-	verify = verify_user_project_administrator(project, request.user.pk)
+	proyecto = Proyecto.objects.get(pk = pk)
+	proyecto.delete()
+	response['type'] = 'success'
+	response['msg'] = 'Exito al eliminar el proyecto'
+	return HttpResponse(json.dumps(response), "application/json")
+
+@login_required
+def delete_role_role_from_project(request, pk, tag_url, user):
+	response = {}
+	verify = verify_user_project_administrator(pk, request.user.pk)
 	if verify is True:
-		role_project = Roles_project.objects.get(user = user, proyecto = project)
+		role_project = Roles_project.objects.get(user = user, proyecto = pk)
 		role_project.delete()
 		response['type'] = 'success'
 		response['msg'] = 'Exito al eliminar el usuario'
@@ -118,8 +127,8 @@ def delete_role_role_from_project(request, user, project):
 	return HttpResponse(json.dumps(response), "application/json")
 
 @login_required
-def add_user_project(request, project):
-	project = Proyecto.objects.get(pk = project)
+def add_user_project(request, pk, tag_url):
+	project = Proyecto.objects.get(pk = pk, tag_url = tag_url)
 	if request.method == 'POST':
 		response = {}
 		form = AddUserProjectForm(request.POST, instance = project)
@@ -130,13 +139,4 @@ def add_user_project(request, project):
 		return HttpResponseRedirect(reverse('list_role', kwargs={'pk': project.pk, 'tag_url': project.tag_url}))
 	else:
 		form = AddUserProjectForm(instance = project)
-	return render(request, var_dir_template+'form_add_user_project.html', {'forms': form, 'project_pk': project.pk, 'title': 'Agregar usuarios al proyecto'})
-
-@login_required
-def delete_project(request, pk):
-	response = {}
-	proyecto = Proyecto.objects.get(pk = pk)
-	proyecto.delete()
-	response['type'] = 'success'
-	response['msg'] = 'Exito al eliminar el proyecto'
-	return HttpResponse(json.dumps(response), "application/json")
+	return render(request, var_dir_template+'form_add_user_project.html', {'forms': form, 'project': project, 'title': 'Agregar usuarios al proyecto'})

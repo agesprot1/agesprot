@@ -30,7 +30,7 @@
 				<div class="list">
 				{% for project in object_list %}
 					<div class="col-md-4" id="object-{{ project.pk }}">
-						<div class="thumbnail">
+						<div class="thumbnail content-square">
 							<br>
 							<img src="{% if project.estado.nombre_estado == 'Activo' %}{% static 'img/folder_active.png' %}{% else %}{% static 'img/folder_inactive.png' %}{% endif %}" alt="{{  project.nombre_proyecto}}" style="width: 100px;" class="text-center">
 							<div class="caption">
@@ -47,8 +47,8 @@
 										<p class="text-success">Proyecto finalizado</p>
 									{% endif %}
 									{% if request.user.pk|verify_admin_project:project.pk %}
-										<a href="{% url 'update_project' project.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
-										<a href="{% url 'delete_project' project.pk %}" id="{{ project.pk }}" class="btn btn-danger delete">Eliminar</a>
+										<a href="{% url 'update_project' project.pk project.tag_url %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
+										<a href="{% url 'delete_project' project.pk project.tag_url %}" id="{{ project.pk }}" class="btn btn-danger delete">Eliminar</a>
 									{% endif %}
 								</div>
 							</div>

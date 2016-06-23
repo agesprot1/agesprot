@@ -4,22 +4,21 @@
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title" id="myModalLabel">{{ title }}</h4>
 		</div>
-		<form role="form" action="{% url 'add_user_project' project.pk project.tag_url %}" method="POST">
+		<form role="form" action="{% url 'add_user_activity' project.pk project.tag_url pk_activity %}" method="POST">
 			{% csrf_token %}
 			<div class="modal-body">
 				<div class="row">
-					{% for form in forms %}
-						<div class="form-group col-md-12">
-							<label>{{ form.label }}</label>
-							{{ form }}
-							{{ form.errors }}
-						</div>
+					{% for forms in form %}
+					<div class="form-group col-md-12">
+						<label>{{ forms.label }}</label>
+						{{ forms }}
+					</div>
 					{% endfor %}
 				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-				<input type="submit" value="Enviar" class="btn btn-success"/>
+				<input type="submit" value="Guardar" class="btn btn-success"/>
 			</div>
 		</form>
 	</div>
