@@ -1,0 +1,11 @@
+<form role="form" action="{% url 'create_comment_task' project.pk project.tag_url object.actividad.pk object.pk %}" method="POST">
+	{% csrf_token %}
+	{% for forms in form %}
+	<div class="form-group">
+		{{ forms }}
+	</div>
+	{% endfor %}
+	<div class="form-group text-right">
+		<input type="submit" value="Comentar" class="btn btn-success"/>
+	</div>
+</form>

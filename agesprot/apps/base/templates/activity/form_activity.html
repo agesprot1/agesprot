@@ -28,7 +28,7 @@
 	var date_end = new Date("{{ project.fecha_final|date:'Y/m/d' }}");
 	$('.date').datetimepicker({
 		format: 'YYYY-MM-DD',
-		useCurrent: false,
+		useCurrent: true,
 		minDate: date_init,
 		maxDate: date_end
 	});

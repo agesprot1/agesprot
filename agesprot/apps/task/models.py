@@ -23,6 +23,7 @@ class Tarea(models.Model):
 
 class Comentario_tarea(models.Model):
 	comentario = models.CharField(max_length = 300)
+	fecha_creacion = models.DateField(auto_now = True, null = True, blank = True)
 	tarea = models.ForeignKey(Tarea)
 	usuario = models.ForeignKey(User)
 

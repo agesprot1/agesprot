@@ -1,0 +1,91 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+
+{% load project_filters %}
+
+{% block content_head %}
+	<script src="{% static 'js/list.min.js' %}"></script>
+	<script src="{% static 'js/list.pagination.min.js' %}"></script>
+{% endblock content_head %}
+
+{% block content %}
+	<div id="wrapper">
+		{% include 'elements/menu_project.html' %}
+		<div id="page-wrapper">
+			<div class="row">
+				<div class="content-head">
+					<h1>
+						{{ title }}{{ object.nombre_tarea }}
+					</h1>
+				</div>
+			</div>
+			{% for message in messages %}
+				<div class="row">
+					<div class="alert alert-{{ message.tags }} col-md-4 col-md-offset-4">{{ message }}</div>
+				</div>
+			{% endfor %}
+			<div class="row">
+				<div class="col-md-8">
+					<div class="col-md-12 content">
+						<h3>Comentarios</h3>
+						<div id="comments-url"></div>
+					</div>
+					<div class="col-md-12 content" id="task-list">
+						<div class="list">
+						{% for comment in object.comentario_tarea_set.all %}
+							<div class="col-md-12" id="object-{{ comment.pk }}" style="border-bottom: 1px solid #eee; margin-bottom: 15px;">
+								<div class="col-md-1 text-center">
+									<img src="{% static comment.usuario.profileuser.get_foto %}" class="img-circle" style="width: 40px;">
+								</div>
+								<div class="col-md-11">
+									<small><b>{{ comment.usuario.profileuser.get_full_name }}</b></small>
+									<p><small><i class="glyphicon glyphicon-calendar"></i> {{ comment.fecha_creacion }}</small></p>
+								</div>
+								<div class="col-md-12">
+									<p>{{ comment.comentario }}</p>
+								</div>
+								{% if request.user.pk|verify_admin_project:project.pk %}
+									<div class="col-md-12 text-center" style="margin-bottom: 15px;">
+										<a href="{% url 'delete_comment' project.pk project.tag_url comment.tarea.actividad.pk comment.tarea.pk comment.pk %}" class="btn btn-danger delete" id="{{ comment.pk }}">Eliminar comentario</a>
+									</div>
+								{% endif %}
+							</div>
+						{% empty %}
+							<div class="text-center col-md-12">
+								<img src="{% static 'img/oops.png' %}" alt="{null" style="width: 150px;">
+								<h2>No hay registros.</h2>
+								<h4>Vaya, no se encontraron comentarios.</h4>
+							</div>
+						{% endfor %}
+						</div>
+						<div class="col-md-12 text-center">
+							<ul class="pagination"></ul>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="col-md-12 content">
+						<h3>Documentos</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}
+
+{% block content_script %}
+	$.ajax({
+		url: "{% url 'create_comment_task' project.pk project.tag_url object.actividad.pk object.pk %}",
+		success: function(data){
+			$("#comments-url").html(data);
+		}
+	});
+	var options = {
+		page: 4,
+		plugins: [
+			ListPagination({})
+		]
+	};
+	var projectList = new List('task-list', options);
+{% endblock content_script %}
