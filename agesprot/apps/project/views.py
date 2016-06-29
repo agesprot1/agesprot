@@ -45,7 +45,7 @@ class UpdateProjectView(SuccessMessageMixin, UpdateView):
 	def get_context_data(self, **kwargs):
 		context = super(UpdateProjectView, self).get_context_data(**kwargs)
 		context['title'] = 'Editar proyecto'
-		context['url'] = '/project/update-project/'+self.kwargs['pk']+'/'+self.kwargs['tag_url']+'/'
+		context['url'] = '/project/'+self.kwargs['pk']+'/'+self.kwargs['tag_url']+'/update-project/'
 		return context
 
 	def form_valid(self, form):

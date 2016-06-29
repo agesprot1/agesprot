@@ -35,7 +35,9 @@
 					<div class="col-md-12">
 						<h1 class="text-center">
 							Tareas de la actividad
-							<a href="{% url 'add_task_activity' project.pk project.tag_url object.pk %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Crear tarea</a>
+							{% if request.user.pk|verify_user_activity:object.pk %}
+								<a href="{% url 'add_task_activity' project.pk project.tag_url object.pk %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Crear tarea</a>
+							{% endif %}
 						</h1>
 						<div class="row" id="task-list">
 							<div class="form-group col-md-6 col-md-offset-3">

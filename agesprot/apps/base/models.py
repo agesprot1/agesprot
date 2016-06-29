@@ -51,31 +51,9 @@ class Tipo_role(models.Model):
 	def __unicode__(self):
 		return self.nombre_role
 
-class Tipo_documentoManager(models.Manager):
-	def crear_tipo_documento(self, nombre_tipo):
-		documento = ''
-		try:
-			self.get(nombre_tipo = nombre_tipo)
-		except ObjectDoesNotExist:
-			documento = self.create(nombre_tipo = nombre_tipo)
-		return documento
-
-class Tipo_documento(models.Model):
-	nombre_tipo = models.CharField(max_length = 45)
-	objects = Tipo_documentoManager()
-
-	def __str__(self):
-		return self.nombre_tipo
-
-	def __unicode__(self):
-		return self.nombre_tipo
-
 estado = Tipo_estado.objects.crear_tipo_estado("Activo")
 estado = Tipo_estado.objects.crear_tipo_estado("Inactivo")
 estado = Tipo_estado.objects.crear_tipo_estado("Proceso")
 estado = Tipo_estado.objects.crear_tipo_estado("Pendiente")
 estado = Tipo_estado.objects.crear_tipo_estado("Terminado")
-documento = Tipo_documento.objects.crear_tipo_documento("PDF")
-documento = Tipo_documento.objects.crear_tipo_documento("Ofimatica")
-documento = Tipo_documento.objects.crear_tipo_documento("Imagen")
 role = Tipo_role.objects.crear_tipo_role("Administrador")

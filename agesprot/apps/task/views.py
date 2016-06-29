@@ -5,8 +5,9 @@ from agesprot.apps.activity.models import Actividad
 from agesprot.apps.project.models import Proyecto
 from agesprot.apps.base.models import Tipo_estado
 from django.core.urlresolvers import reverse
+from django.utils.encoding import smart_str
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
 import datetime
@@ -95,6 +96,24 @@ class NewTaskCommentView(SuccessMessageMixin, CreateView):
 	def get_success_url(self):
 		return reverse('detail_task', args = (self.kwargs['pk'], self.kwargs['tag_url'], self.kwargs['pk_activity'], self.kwargs['pk_task']))
 
+class UploadFileView(SuccessMessageMixin, CreateView):
+	template_name = var_dir_template+'form_task_document.html'
+	success_message = 'Documento agregado con exito.'
+	form_class = DocumentoTareaForm
+
+	def get_context_data(self, **kwargs):
+		context = super(UploadFileView, self).get_context_data(**kwargs)
+		context['title'] = 'Nuevo documento'
+		context['url'] = '/project/'+self.kwargs['pk']+'/'+self.kwargs['tag_url']+'/activities/'+self.kwargs['pk_activity']+'/task/'+self.kwargs['pk_task']+'/upload-file/'
+		return context
+
+	def form_valid(self, form):
+		form.instance.tarea = Tarea.objects.get(pk = self.kwargs['pk_task'])
+		return super(UploadFileView, self).form_valid(form)
+
+	def get_success_url(self):
+		return reverse('detail_task', args = (self.kwargs['pk'], self.kwargs['tag_url'], self.kwargs['pk_activity'], self.kwargs['pk_task']))
+
 @login_required
 def delete_task(request, pk, tag_url, pk_activity, pk_task):
 	response = {}
@@ -112,3 +131,17 @@ def delete_comment(request, pk, tag_url, pk_activity, pk_task, pk_comment):
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar el comentario'
 	return HttpResponse(json.dumps(response), "application/json")
+
+@login_required
+def delete_document(request, pk, tag_url, pk_activity, pk_task, pk_document):
+	response = {}
+	comment = Documento.objects.get(pk = pk_document)
+	comment.delete()
+	response['type'] = 'success'
+	response['msg'] = 'Exito al eliminar el documento'
+	return HttpResponse(json.dumps(response), "application/json")
+
+@login_required
+def download_document(request, pk, tag_url, pk_activity, pk_task, pk_document):
+	documento = Documento.objects.get(pk = pk_document)
+	return redirect('%s/%s'%('/static/', documento.documento))

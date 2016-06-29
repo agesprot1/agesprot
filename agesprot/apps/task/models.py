@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
-from agesprot.apps.base.models import Tipo_estado, Tipo_prioridad, Tipo_documento
+from agesprot.apps.base.models import Tipo_estado, Tipo_prioridad
+from django.contrib.contenttypes.models import ContentType
 from agesprot.apps.activity.models import Actividad
 from django.contrib.auth.models import User
 from django.db import models
@@ -33,11 +34,14 @@ class Comentario_tarea(models.Model):
 	def __unicode__(self):
 		return self.comentario
 
+def get_path(instance, filename):
+	tarea = instance.tarea
+	return 'file/project/'+str(tarea.actividad.proyecto.pk)+'/activities/'+str(tarea.actividad.pk)+'/task/'+str(tarea.pk)+'/'+filename
+
 class Documento(models.Model):
 	nombre_documento = models.CharField(max_length = 45)
-	documento = models.FileField(upload_to = 'files/')
+	documento = models.FileField(upload_to = get_path)
 	tarea = models.ForeignKey(Tarea)
-	tipo_documento = models.ForeignKey(Tipo_documento)
 
 	def __str__(self):
 		return self.nombre_documento

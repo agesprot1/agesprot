@@ -8,6 +8,9 @@ task_patterns = [
 	url(r'^detail-task/$', login_required(DetailTaskView.as_view()), name = 'detail_task'),
 	url(r'^create-comment-task/$', login_required(NewTaskCommentView.as_view()), name = 'create_comment_task'),
 	url(r'^delete-comment/(?P<pk_comment>\d+)/$', delete_comment, name = 'delete_comment'),
+	url(r'^upload-file/$', login_required(UploadFileView.as_view()), name = 'upload_file'),
+	url(r'^delete-document/(?P<pk_document>\d+)/$', delete_document, name = 'delete_document'),
+	url(r'^download-document/(?P<pk_document>\d+)/$', download_document, name = 'download_document'),
 ]
 
 urlpatterns = patterns('agesprot.apps.task.views',

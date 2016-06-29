@@ -27,10 +27,12 @@
 			{% endfor %}
 			<div class="row">
 				<div class="col-md-8">
-					<div class="col-md-12 content">
-						<h3>Comentarios</h3>
-						<div id="comments-url"></div>
-					</div>
+					{% if request.user.pk|verify_user_activity:object.actividad.pk %}
+						<div class="col-md-12 content">
+							<h3>Comentarios</h3>
+							<div id="comments-url"></div>
+						</div>
+					{% endif %}
 					<div class="col-md-12 content" id="task-list">
 						<div class="list">
 						{% for comment in object.comentario_tarea_set.all %}
@@ -67,6 +69,23 @@
 				<div class="col-md-4">
 					<div class="col-md-12 content">
 						<h3>Documentos</h3>
+						{% for document in object.documento_set.all %}
+							<div class="col-md-12" id="object-{{ document.pk }}">
+								<a href="{% url 'download_document' project.pk project.tag_url object.actividad.pk object.pk document.pk %}" target="_blank"><i>{{ document.nombre_documento }}</i></a>
+								<a href="{% url 'delete_document' project.pk project.tag_url object.actividad.pk object.pk document.pk %}" class="delete" id="{{ document.pk }}" style="float: right; color: red;"><i class="glyphicon glyphicon-remove"></i></a>
+							</div>
+						{% empty %}
+							<div class="text-center col-md-12">
+								<img src="{% static 'img/oops.png' %}" alt="{null" style="width: 70px;">
+								<h2>No hay registros.</h2>
+								<h4>Vaya, no se encontraron documentos.</h4>
+							</div>
+						{% endfor %}
+						{% if request.user.pk|verify_user_activity:object.actividad.pk %}
+							<div class="col-md-12 text-center" style="margin-top: 10px;">
+								<a href="{% url 'upload_file' project.pk project.tag_url object.actividad.pk object.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Subir archivo</a>
+							</div>
+						{% endif %}
 					</div>
 				</div>
 			</div>

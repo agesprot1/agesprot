@@ -34,3 +34,17 @@ class ComentarioTareaForm(forms.ModelForm):
 		widgets = {
 			'comentario': Textarea(attrs = {'rows': 3, 'class': 'form-control', 'maxlength': '300', 'required': True}),
 		}
+
+class DocumentoTareaForm(forms.ModelForm):
+	class Meta:
+		model = Documento
+		fields = '__all__'
+		exclude = ('tarea',)
+		widgets = {
+			'nombre_documento': TextInput(attrs = {'class': 'form-control', 'maxlength': '45', 'required': True}),
+			'documento': FileInput(attrs = {'required': True}),
+		}
+		labels = {
+			'nombre_documento': 'Nombre del documento',
+			'documento': 'Documento',
+		}
