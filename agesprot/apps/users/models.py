@@ -18,8 +18,3 @@ class ProfileUser(models.Model):
 
 	def get_full_name(self):
 		return self.user.first_name+" "+self.user.last_name
-
-class Historial(models.Model):
-	user = models.ForeignKey(User)
-	descripcion = models.CharField(max_length = 50)
-	fecha_historial = models.DateTimeField(auto_now = True)

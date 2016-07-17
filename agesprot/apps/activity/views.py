@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, FormView
+from agesprot.apps.audit.register_activity import register_activity_profile_user
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from agesprot.apps.base.models import Tipo_estado
@@ -54,8 +55,11 @@ class NewActivitieView(SuccessMessageMixin, CreateView):
 		return context
 
 	def form_valid(self, form):
-		form.instance.proyecto = Proyecto.objects.get(pk = self.kwargs['pk'])
+		proyecto = Proyecto.objects.get(pk = self.kwargs['pk'])
+		form.instance.proyecto = proyecto
 		form.instance.estado = Tipo_estado.objects.get(nombre_estado = 'Activo')
+		form_data = form.save()
+		register_activity_profile_user(self.request.user, 'Actividad '+form_data.nombre_actividad+' creada en el proyecto '+proyecto.nombre_proyecto)
 		return super(NewActivitieView, self).form_valid(form)
 
 	def get_success_url(self):
@@ -81,8 +85,11 @@ class UpdateActivitieView(SuccessMessageMixin, UpdateView):
 
 	def form_valid(self, form):
 		estado = Tipo_estado.objects.all()
-		form.instance.proyecto = Proyecto.objects.get(pk = self.kwargs['pk'])
+		proyecto = Proyecto.objects.get(pk = self.kwargs['pk'])
+		form.instance.proyecto = proyecto
 		form.instance.estado = estado.get(nombre_estado = 'Activo') if form.cleaned_data['fecha_entrega'] >= datetime.datetime.now().date() else estado.get(nombre_estado = 'Terminado')
+		form_data = form.save()
+		register_activity_profile_user(self.request.user, 'Actividad '+form_data.nombre_actividad+' actualizada en el proyecto '+proyecto.nombre_proyecto)
 		return super(UpdateActivitieView, self).form_valid(form)
 
 	def get_success_url(self):
@@ -107,6 +114,7 @@ class DetailActivitieView(DetailView):
 def delete_activities(request, pk, tag_url, pk_activity):
 	response = {}
 	actividad = Actividad.objects.get(pk = pk_activity)
+	register_activity_profile_user(request.user, 'Actividad '+actividad.nombre_actividad+' eliminada del proyecto '+actividad.proyecto.nombre_proyecto)
 	actividad.delete()
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar la actividad'
@@ -121,6 +129,7 @@ class UserRoleActivitieView(SuccessMessageMixin, FormView):
 	def get_form_kwargs(self):
 		kwargs = super(UserRoleActivitieView, self).get_form_kwargs()
 		kwargs['actividad'] = self.kwargs['pk_activity']
+		kwargs['proyecto'] = self.kwargs['pk']
 		return kwargs
 
 	def get_context_data(self, **kwargs):
@@ -133,7 +142,8 @@ class UserRoleActivitieView(SuccessMessageMixin, FormView):
 
 	def form_valid(self, form):
 		form.instance.actividad = Actividad.objects.get(pk = self.kwargs['pk_activity'])
-		form.save()
+		form_data = form.save()
+		register_activity_profile_user(self.request.user, 'Usuario '+form_data.role.user.email+' agregado a la actividad '+form_data.actividad.nombre_actividad+' del proyecto '+form_data.actividad.proyecto.nombre_proyecto)
 		return super(UserRoleActivitieView, self).form_valid(form)
 
 	def get_success_url(self):
@@ -144,6 +154,7 @@ class UserRoleActivitieView(SuccessMessageMixin, FormView):
 def delete_user_activity(request, pk, tag_url, pk_activity, pk_role):
 	response = {}
 	actividad_role = Actividad_role.objects.get(pk = pk_role)
+	register_activity_profile_user(request.user, 'Usuario '+actividad_role.role.user.email+' eliminado de la actividad '+actividad_role.actividad.nombre_actividad+' del proyecto '+actividad_role.actividad.proyecto.nombre_proyecto)
 	actividad_role.delete()
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar el usuario de la actividad'

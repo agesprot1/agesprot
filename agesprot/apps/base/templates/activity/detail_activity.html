@@ -56,7 +56,7 @@
 											<p><i class="glyphicon glyphicon-calendar"></i> <b>Fecha entrega: </b>{{ task.fecha_entrega }}</p>
 											<p><i class="glyphicon glyphicon-user"></i> <b>Creado por: </b>{{ task.usuario.profileuser.get_full_name }}</p>
 											<p><i class="glyphicon glyphicon-certificate"></i> <b>Estado: </b>{{ task.estado }}</p>
-											{% if task.estado.nombre_estado == 'Proceso' %}
+											{% if task.estado.nombre_estado == 'Proceso' or request.user.pk|verify_admin_project:project.pk %}
 												<a href="{% url 'detail_task' project.pk project.tag_url object.pk task.pk %}" class="btn btn-primary">Seleccionar</a>
 											{% endif %}
 											{% if request.user.pk|verify_admin_project:project.pk %}
@@ -107,9 +107,11 @@
 									{% endif %}
 								</div>
 							{% empty %}
-								<p>
-									<b>No hay usuarios</b>
-								</p>
+								<div class="col-md-12 text-center">
+									<p>
+										<b>No hay usuarios en esta actividad</b>
+									</p>
+								</div>
 							{% endfor %}
 							{% if request.user.pk|verify_admin_project:project.pk %}
 								<div class="col-md-12 text-center">

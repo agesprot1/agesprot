@@ -17,9 +17,11 @@ urlpatterns = patterns('agesprot.apps.users.views',
 	url(r'^change-password/$', 'change_password', name = 'change_password'),
 	url(r'^user-profile/$', login_required(TemplateView.as_view(template_name = 'users/profile_user.html')), {'title': 'Mi perfil'}, name = 'profile'),
 	url(r'^response-message/$', TemplateView.as_view(template_name = 'users/response_message.html'), {'title': 'Bienvenido'}, name = 'response_message'),
+	url(r'^update-foto/(?P<pk>\d+)/$', login_required(UpdateFotoUserView.as_view()), name = 'update_foto'),
+	url(r'^logout/$', 'logout_user', name = 'logout')
 )
 
 urlpatterns += [
 	url(r'^login/$', login_forbidden(auth_views.login), {'template_name': 'users/form_login.html', 'extra_context': {'title': 'Login'}}, name = 'login'),
-	url(r'^logout/$', auth_views.logout, {'next_page': '/users/login'}, name = 'logout')
+	#url(r'^logout/$', auth_views.logout, {'next_page': '/users/login'}, name = 'logout')
 ]

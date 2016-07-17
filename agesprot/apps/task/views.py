@@ -1,13 +1,14 @@
+from agesprot.apps.audit.register_activity import register_activity_profile_user
 from django.views.generic import DetailView, CreateView, UpdateView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from agesprot.apps.activity.models import Actividad
 from agesprot.apps.project.models import Proyecto
 from agesprot.apps.base.models import Tipo_estado
+from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.utils.encoding import smart_str
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
 import datetime
@@ -29,9 +30,12 @@ class NewTaskActivityView(SuccessMessageMixin, CreateView):
 		return context
 
 	def form_valid(self, form):
-		form.instance.actividad = Actividad.objects.get(pk = self.kwargs['pk_activity'])
+		actividad = Actividad.objects.get(pk = self.kwargs['pk_activity'])
+		form.instance.actividad = actividad
 		form.instance.estado = Tipo_estado.objects.get(nombre_estado = 'Proceso')
 		form.instance.usuario = self.request.user
+		form_data = form.save()
+		register_activity_profile_user(self.request.user, 'Tarea '+form_data.nombre_tarea+' creada en la actividad '+actividad.nombre_actividad+' del proyecto '+actividad.proyecto.nombre_proyecto)
 		return super(NewTaskActivityView, self).form_valid(form)
 
 	def get_success_url(self):
@@ -56,8 +60,11 @@ class UpdateTaskActivityView(SuccessMessageMixin, UpdateView):
 
 	def form_valid(self, form):
 		estado = Tipo_estado.objects.all()
-		form.instance.actividad = Actividad.objects.get(pk = self.kwargs['pk_activity'])
+		actividad = Actividad.objects.get(pk = self.kwargs['pk_activity'])
+		form.instance.actividad = actividad
 		form.instance.estado = estado.get(nombre_estado = 'Proceso') if form.cleaned_data['fecha_entrega'] >= datetime.datetime.now().date() else estado.get(nombre_estado = 'Terminado')
+		form_data = form.save()
+		register_activity_profile_user(self.request.user, 'Tarea '+form_data.nombre_tarea+' actualizada en la actividad '+actividad.nombre_actividad+' del proyecto '+actividad.proyecto.nombre_proyecto)
 		return super(UpdateTaskActivityView, self).form_valid(form)
 
 	def get_success_url(self):
@@ -89,8 +96,11 @@ class NewTaskCommentView(SuccessMessageMixin, CreateView):
 		return context
 
 	def form_valid(self, form):
-		form.instance.tarea = Tarea.objects.get(pk = self.kwargs['pk_task'])
+		tarea = Tarea.objects.get(pk = self.kwargs['pk_task'])
+		form.instance.tarea = tarea
 		form.instance.usuario = self.request.user
+		form_data = form.save()
+		register_activity_profile_user(self.request.user, 'Comentario agregado en la tarea '+tarea.nombre_tarea+' de la actividad '+tarea.actividad.nombre_actividad+' del proyecto '+tarea.actividad.proyecto.nombre_proyecto)
 		return super(NewTaskCommentView, self).form_valid(form)
 
 	def get_success_url(self):
@@ -108,7 +118,10 @@ class UploadFileView(SuccessMessageMixin, CreateView):
 		return context
 
 	def form_valid(self, form):
-		form.instance.tarea = Tarea.objects.get(pk = self.kwargs['pk_task'])
+		tarea = Tarea.objects.get(pk = self.kwargs['pk_task'])
+		form.instance.tarea = tarea
+		form_data = form.save()
+		register_activity_profile_user(self.request.user, 'Archivo subido de la tarea '+tarea.nombre_tarea+' de la actividad '+tarea.actividad.nombre_actividad+' en el proyecto '+tarea.actividad.proyecto.nombre_proyecto)
 		return super(UploadFileView, self).form_valid(form)
 
 	def get_success_url(self):
@@ -118,6 +131,7 @@ class UploadFileView(SuccessMessageMixin, CreateView):
 def delete_task(request, pk, tag_url, pk_activity, pk_task):
 	response = {}
 	tarea = Tarea.objects.get(pk = pk_task)
+	register_activity_profile_user(request.user, 'Tarea '+tarea.nombre_tarea+' eliminada de la actividad '+tarea.actividad.nombre_actividad+' del proyecto '+tarea.actividad.proyecto.nombre_proyecto)
 	tarea.delete()
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar la tarea'
@@ -127,6 +141,7 @@ def delete_task(request, pk, tag_url, pk_activity, pk_task):
 def delete_comment(request, pk, tag_url, pk_activity, pk_task, pk_comment):
 	response = {}
 	comment = Comentario_tarea.objects.get(pk = pk_comment)
+	register_activity_profile_user(request.user, 'Comentario eliminado de la tarea '+comment.tarea.nombre_tarea+' de la actividad '+comment.tarea.actividad.nombre_actividad+' del proyecto '+comment.tarea.actividad.proyecto.nombre_proyecto)
 	comment.delete()
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar el comentario'
@@ -135,8 +150,9 @@ def delete_comment(request, pk, tag_url, pk_activity, pk_task, pk_comment):
 @login_required
 def delete_document(request, pk, tag_url, pk_activity, pk_task, pk_document):
 	response = {}
-	comment = Documento.objects.get(pk = pk_document)
-	comment.delete()
+	documento = Documento.objects.get(pk = pk_document)
+	register_activity_profile_user(request.user, 'Archivo eliminado de la tarea '+documento.tarea.nombre_tarea+' de la actividad '+documento.tarea.actividad.nombre_actividad+' en el proyecto '+documento.tarea.actividad.proyecto.nombre_proyecto)
+	documento.delete()
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar el documento'
 	return HttpResponse(json.dumps(response), "application/json")
@@ -144,4 +160,5 @@ def delete_document(request, pk, tag_url, pk_activity, pk_task, pk_document):
 @login_required
 def download_document(request, pk, tag_url, pk_activity, pk_task, pk_document):
 	documento = Documento.objects.get(pk = pk_document)
+	register_activity_profile_user(request.user, 'Archivo descargado de la tarea '+documento.tarea.nombre_tarea+' de la actividad '+documento.tarea.actividad.nombre_actividad+' en el proyecto '+documento.tarea.actividad.proyecto.nombre_proyecto)
 	return redirect('%s/%s'%('/static/', documento.documento))

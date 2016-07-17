@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 	'agesprot.apps.project',
 	'agesprot.apps.activity',
 	'agesprot.apps.task',
+	'agesprot.apps.audit',
 	'agesprot.apps.project.templatetags',
 ]
 
@@ -102,7 +103,7 @@ DATABASES = {
 		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 	}
 }
-
+"""
 # LOCAL
 DATABASES = {
 	'default': {
@@ -125,7 +126,7 @@ DATABASES = {
 		'PORT': '5432'
 	}
 }
-
+"""
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
@@ -170,8 +171,6 @@ STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'agesprot/static')
-
-MEDIA_URL ='/img/'
 
 STATICFILES_DIRS = (
 	os.path.join(BASE_DIR, 'agesprot/static'),

@@ -83,3 +83,12 @@ class ChangePasswordForm(forms.Form):
 	old_password = forms.CharField(label = 'Contraseña antigua', widget = forms.PasswordInput(attrs = {'class': 'form-control', 'minlength': 8, 'required': True}))
 	new_password = forms.CharField(label = 'Contraseña nueva', widget = forms.PasswordInput(attrs = {'class': 'form-control', 'minlength': 8, 'required': True}))
 	re_new_password = forms.CharField(label = 'Confirme la contraseña', widget = forms.PasswordInput(attrs = {'class': 'form-control', 'minlength': 8, 'required': True}))
+
+class ChangePhotoUserForm(forms.ModelForm):
+	class Meta:
+		model = ProfileUser
+		fields = '__all__'
+		exclude = ('user', )
+		labels = {
+			'foto': 'Seleccione una foto',
+		}

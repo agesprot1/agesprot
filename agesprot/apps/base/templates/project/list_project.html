@@ -41,8 +41,8 @@
 									<span class="label label-warning"><strong>{{ project.actividad_set.count }}</strong> Actividades</span>
 								</p>
 								<div class="text-center">
-									{% if project.estado.nombre_estado == 'Activo' %}
-										<a href="{% url 'project' project.pk project.tag_url %}" class="btn btn-primary">Ingresar</a>
+									{% if project.estado.nombre_estado == 'Activo' or request.user.pk|verify_admin_project:project.pk %}
+										<a href="{% url 'list_activities' project.pk project.tag_url %}" class="btn btn-primary">Ingresar</a>
 									{% else %}
 										<p class="text-success">Proyecto finalizado</p>
 									{% endif %}

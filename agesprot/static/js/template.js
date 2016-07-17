@@ -1,3 +1,4 @@
+// init $(document)
 $(document).on("click", ".open-modal", function(e){
 	$('#Modal').load($(this).attr('href'),function(){
 		$('#Modal').modal({
@@ -36,6 +37,12 @@ $(document).on("click", ".delete", function(){
 	});
 	return false;
 });
+$(document).on("click", ".url", function(){
+	history.pushState({url: $(this).attr('href')}, $(this).attr('href'), '');
+});
+// end $(document)
+
+// init function JS
 function show_message(type, message){
 	Lobibox.notify(type, {
 		size: 'mini',
@@ -52,9 +59,17 @@ function change(state){
 		$(document).text(state.url);
 	}
 }
-$(document).on("click", ".url", function(){
-	history.pushState({url: $(this).attr('href')}, $(this).attr('href'), '');
-});
+function show_loading(id){
+	$('#'+id).append(
+		"<div class='text-center' id='loading'>"+
+			"<img src='/static/img/loading.gif' alt='Cargando'>"+
+			"<h3>Cargando gráfico</h3>"+
+		"</div>"
+	);
+}
+// end function JS
+
+// init other JS
 $(window).on("popstate", function(e) {
 	console.log(e.originalEvent.state);
 });
@@ -67,3 +82,4 @@ $(window).on("popstate", function(e) {
 setTimeout(function(){
 	$('.alert').remove();
 }, 5000);
+// end other JS

@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from agesprot.apps.audit.register_activity import register_activity_profile_user
 from django.contrib.auth.decorators import permission_required, login_required
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import render, render_to_response, get_object_or_404
@@ -15,6 +16,7 @@ from django.core.urlresolvers import reverse
 from .forms import PasswordResetRequestForm
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
+from django.contrib.auth import logout
 from mail_templated import send_mail
 from django.contrib import messages
 from django.template import loader
@@ -51,6 +53,7 @@ class ResetPasswordRequestView(FormView):
 					'protocol': 'http://',
 					'subject': 'Cambio de Contraseña'
 				}
+				register_activity_profile_user(user, 'Solicitud cambio de contraseña')
 				email_template_name = 'email/password_reset_subject.html'
 				send_mail(email_template_name, data, settings.DEFAULT_FROM_EMAIL, [user.email])
 				result = self.form_valid(form)
@@ -90,6 +93,7 @@ class PasswordResetConfirmView(FormView):
 				user.set_password(new_password)
 				user.save()
 				messages.success(request, 'Cambio de contraseña exitoso.')
+				register_activity_profile_user(user, 'Cambio de contraseña realizado por solicitud')
 				return self.form_valid(form)
 			else:
 				messages.warning(request, 'Ha ocurrido un error.')
@@ -135,6 +139,7 @@ def update_user(request, user_pk):
 			user_form.is_superuser = user_form.is_superuser if user_form.is_superuser != '' else user.is_superuser
 			user_form.save()
 			messages.success(request, "Exito en la actualización")
+			register_activity_profile_user(request.user, 'Datos de usuario '+user.email+' actualzado')
 		else:
 			messages.error(request, "Error en la actualización")
 		return HttpResponseRedirect(reverse_lazy(next_url))
@@ -146,6 +151,7 @@ def update_user(request, user_pk):
 def change_state_user(request):
 	user = request.GET.get('user')
 	state = True if request.GET.get('state') == 'true' else False
+	state_text = "Activo" if state is True else "Inactivo"
 	response = {}
 	try:
 		user = User.objects.get(pk = user)
@@ -158,6 +164,7 @@ def change_state_user(request):
 		response['state_label'] = 'false' if state is True else 'true'
 		response['type_label'] = 'success' if state is True else 'danger'
 		response['text_label'] = 'Activo' if state is True else 'Inactivo'
+		register_activity_profile_user(request.user, 'Cambio de estado a '+state_text+' del usuario '+user.email)
 	except User.DoesNotExist:
 		response['type'] = 'error'
 		response['status'] = '0'
@@ -171,6 +178,7 @@ def delete_user(request, user):
 	user.delete()
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar el usuario'
+	register_activity_profile_user(request.user, 'Usuario '+user.email+' eliminado')
 	return HttpResponse(json.dumps(response), "application/json")
 
 @login_required
@@ -189,6 +197,7 @@ def change_password(request):
 					saveuser.save()
 					response['type'] = 'success'
 					response['msg'] = 'Cambio de contraseña exitoso.'
+					register_activity_profile_user(request.user, 'Cambio de contraseña')
 				else:
 					response['type'] = 'error'
 					response['msg'] = 'Contraseña antigua errónea.'
@@ -199,3 +208,25 @@ def change_password(request):
 	else:
 		form = ChangePasswordForm()
 	return render(request, var_dir_template+'form_password.html', {'forms': form, 'title': 'Cambiar mi contraseña'})
+
+class UpdateFotoUserView(SuccessMessageMixin, UpdateView):
+	template_name = var_dir_template+'form_foto_user.html'
+	success_url = reverse_lazy('profile')
+	success_message = 'Foto actualizada con exito.'
+	form_class = ChangePhotoUserForm
+	model = ProfileUser
+
+	def get_context_data(self, **kwargs):
+		context = super(UpdateFotoUserView, self).get_context_data(**kwargs)
+		context['title'] = 'Actualizar foto'
+		return context
+
+	def form_valid(self, form):
+		register_activity_profile_user(self.request.user, 'Actualización de foto')
+		form.instance.user = self.request.user
+		return super(UpdateFotoUserView, self).form_valid(form)
+
+def logout_user(request):
+	register_activity_profile_user(request.user, 'Salida de Agesprot')
+	logout(request)
+	return HttpResponseRedirect(reverse_lazy('login'))

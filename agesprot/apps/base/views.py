@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from agesprot.apps.audit.register_activity import register_activity_profile_user
 from django.contrib.auth.decorators import permission_required
 from django.views.generic.list import ListView
 from django.http import HttpResponse
@@ -32,8 +33,10 @@ def form_role(request, role_pk):
 	response = {}
 	try:
 		role = Tipo_role.objects.get(pk = role_pk)
+		action = 'actualizado'
 	except Tipo_role.DoesNotExist:
 		role = role_pk
+		action = 'creado'
 	if request.method == 'POST':
 		form = RoleProjectForm(request.POST, instance = role)
 		if form.is_valid():
@@ -42,6 +45,8 @@ def form_role(request, role_pk):
 			response['pk'] = project_response.pk
 			response['nombre_role'] = project_response.nombre_role
 			response['msg'] = 'Operación exitosa'
+			nombre_role = role.nombre_role if action != 'creado' else project_response.nombre_role
+			register_activity_profile_user(request.user, 'Rol '+nombre_role+' '+action)
 		else:
 			response['type'] = 'error'
 			response['msg'] = 'Ha ocurrido un error'
@@ -54,6 +59,7 @@ def form_role(request, role_pk):
 def delete_role(request, role_pk):
 	response = {}
 	role = Tipo_role.objects.get(pk = role_pk)
+	register_activity_profile_user(request.user, 'Rol '+role.nombre_role+' eliminado')
 	role.delete()
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar el rol'
@@ -64,8 +70,10 @@ def form_prioridad(request, prioridad_pk):
 	response = {}
 	try:
 		prioridad = Tipo_prioridad.objects.get(pk = prioridad_pk)
+		action = 'actualizado'
 	except Tipo_prioridad.DoesNotExist:
 		prioridad = prioridad_pk
+		action = 'creado'
 	if request.method == 'POST':
 		form = PrioridadProjectForm(request.POST, instance = prioridad)
 		if form.is_valid():
@@ -75,6 +83,8 @@ def form_prioridad(request, prioridad_pk):
 			response['color'] = project_response.color_prioridad
 			response['nombre_prioridad'] = project_response.nombre_prioridad
 			response['msg'] = 'Operación exitosa'
+			nombre_prioridad = prioridad.nombre_prioridad if action != 'creado' else project_response.nombre_prioridad
+			register_activity_profile_user(request.user, 'Prioridad '+nombre_prioridad+' '+action)
 		else:
 			response['type'] = 'error'
 			response['msg'] = 'Ha ocurrido un error'
@@ -87,6 +97,7 @@ def form_prioridad(request, prioridad_pk):
 def delete_prioridad(request, prioridad_pk):
 	response = {}
 	prioridad = Tipo_prioridad.objects.get(pk = prioridad_pk)
+	register_activity_profile_user(request.user, 'Priodidad '+prioridad.nombre_prioridad+' eliminado')
 	prioridad.delete()
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar la prioridad'

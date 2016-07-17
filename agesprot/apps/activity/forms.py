@@ -18,7 +18,7 @@ class ActivitieForm(forms.ModelForm):
 		labels = {
 			'nombre_proyecto': 'Nombre de la actividad',
 			'descripcion_actividad': 'Descripción',
-			'fecha_entrega': 'fechade entrega',
+			'fecha_entrega': 'Fecha de entrega',
 		}
 
 	def clean_prioridad(self):
@@ -41,7 +41,7 @@ class UserRoleForm(forms.ModelForm):
 		return Roles_project.objects.get(pk = self.cleaned_data.get('role'))
 
 	def __init__(self, *args, **kwargs):
-		actividad = Actividad.objects.get(pk = kwargs.pop('actividad', None))
-		user_list = [x.role.pk for x in Actividad_role.objects.filter(actividad = actividad.pk)]
+		proyecto = kwargs.pop('proyecto', None)
+		user_list = [x.role.pk for x in Actividad_role.objects.filter(actividad = kwargs.pop('actividad', None))]
 		super(UserRoleForm, self).__init__(*args, **kwargs)
-		self.fields['role'] = forms.ChoiceField(label = "Usuario", choices = [('', 'Seleccione un usuario')]+[(x.pk, x.user.first_name+" "+x.user.last_name) for x in Roles_project.objects.exclude(pk__in = user_list).distinct()], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))
+		self.fields['role'] = forms.ChoiceField(label = "Usuario", choices = [('', 'Seleccione un usuario')]+[(x.pk, x.user.first_name+" "+x.user.last_name+" - "+x.user.email) for x in Roles_project.objects.filter(proyecto = proyecto).exclude(pk__in = user_list)], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))

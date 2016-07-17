@@ -44,5 +44,5 @@ class AddUserProjectForm(forms.ModelForm):
 		project = kwargs.pop('instance', None)
 		user_list = [x.user.pk for x in Roles_project.objects.filter(proyecto = project.pk)]
 		super(AddUserProjectForm, self).__init__(*args, **kwargs)
-		self.fields['user'] = forms.ChoiceField(label = "Usuario", choices = [('', 'Seleccione un usuario')]+[(x.pk, x.first_name+" "+x.last_name) for x in User.objects.exclude(pk__in = user_list).distinct()], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))
+		self.fields['user'] = forms.ChoiceField(label = "Usuario", choices = [('', 'Seleccione un usuario')]+[(x.pk, x.first_name+" "+x.last_name+" - "+x.email) for x in User.objects.exclude(pk__in = user_list).distinct()], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))
 		self.fields['role'] = forms.ChoiceField(label = "Rol", choices = [('', 'Seleccione un rol')]+[(x.pk, x.nombre_role) for x in Tipo_role.objects.all()], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))

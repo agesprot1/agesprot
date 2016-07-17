@@ -47,7 +47,7 @@
 									<span class="label label-warning"><b>{{ activity.actividad_role_set.count }}</b> Integrantes</span>
 									<span class="label label-info"><b>Estado: </b>{{ activity.estado }}</span>
 								</p>
-								{% if activity.estado.nombre_estado == 'Activo' %}
+								{% if activity.estado.nombre_estado == 'Activo' or request.user.pk|verify_admin_project:project.pk %}
 									<a href="{% url 'detail_activities' project.pk project.tag_url activity.pk %}" class="btn btn-primary">Ingresar</a>
 								{% endif %}
 								{% if request.user.pk|verify_admin_project:project.pk %}

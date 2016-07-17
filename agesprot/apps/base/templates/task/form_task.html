@@ -26,10 +26,15 @@
 <script>
 	var date_init = new Date();
 	var date_end = new Date("{{ activity.fecha_entrega|date:'Y/m/d' }}");
-	$('.date').datetimepicker({
-		format: 'YYYY-MM-DD',
-		useCurrent: true,
-		minDate: date_init,
-		maxDate: date_end
-	});
+	if(date_init > date_end){
+		$('#id_fecha_entrega').attr('disabled', true);
+		$('#id_fecha_entrega').after("<p class='text-danger'>Debe cambiar la fecha de la actividad</p>")
+	}else{
+		$('.date').datetimepicker({
+			format: 'YYYY-MM-DD',
+			useCurrent: false,
+			minDate: date_init,
+			maxDate: date_end
+		});
+	}
 </script>

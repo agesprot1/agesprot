@@ -5,12 +5,12 @@
 			<ul class="nav" id="side-menu">
 				<li>
 					<a href="{% url 'list_project' %}" class="url color-ca">
-						<i class="fa fa-dashboard fa-fw"></i> Dashboard
+						<i class="fa fa-home fa-fw"></i> Inicio
 					</a>
 				</li>
 				<li>
 					<a href="{% url 'project' pk=project.pk tag_url=project.tag_url %}" class="url color-ca">
-						<i class="fa fa-home fa-fw"></i> Inicio
+						<i class="fa fa-folder-open fa-fw"></i> Proyecto
 					</a>
 				</li>
 				<li>
@@ -24,6 +24,11 @@
 					</a>
 				</li>
 				{% if user.is_superuser %}
+					<li>
+						<a href="{% url 'audit_project' pk=project.pk tag_url=project.tag_url %}" class="url color-ca">
+							<i class="fa fa-tasks fa-fw"></i> Auditoria
+						</a>
+					</li>
 					{% include 'elements/menu_config_admin.html' %}
 				{% endif %}
 			</ul>

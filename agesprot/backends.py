@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from agesprot.apps.audit.register_activity import register_activity_profile_user
 
 class EmailBackend(object):
 	def authenticate(self, username = None, password = None):
@@ -6,6 +7,7 @@ class EmailBackend(object):
 		try:
 			user = user_cls.objects.get(email = username)
 			if user.check_password(password):
+				register_activity_profile_user(user, 'Ingreso a Agesprot')
 				return user
 		except user_cls.DoesNotExist:
 			return None

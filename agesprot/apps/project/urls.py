@@ -14,6 +14,8 @@ proyect_patterns = [
 	url(r'^update-project/$', login_required(UpdateProjectView.as_view()), name = 'update_project'),
 	url(r'^delete-project/$', delete_project, name = 'delete_project'),
 	url(r'^activities/', include('agesprot.apps.activity.urls')),
+	url(r'^audit/', login_required(AuditProjectView.as_view()), name = 'audit_project'),
+	url(r'^data-chart/$', response_data_project_chart, name = 'response_data_project_chart'),
 ]
 
 urlpatterns = patterns('agesprot.apps.project.views',
