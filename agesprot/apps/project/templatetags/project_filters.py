@@ -20,7 +20,7 @@ def verify_user_project_administrator(project, user):
 		False
 
 def regla_tres(a, b):
-	return int((a*100)/b)
+	return int((a*100)/b) if b == 0 else 0
 
 @register.filter
 def verify_admin_project(user, project):
