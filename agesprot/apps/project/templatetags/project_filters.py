@@ -20,7 +20,7 @@ def verify_user_project_administrator(project, user):
 		False
 
 def regla_tres(a, b):
-	return int((a*100)/b) if b == 0 else 0
+	return int((a*100)/b)
 
 @register.filter
 def verify_admin_project(user, project):
@@ -63,7 +63,7 @@ def count_project(type_count, object_data):
 	elif type_count == 'progress':
 		activity_tot = Actividad.objects.filter(proyecto = object_data)
 		activity_terminate = activity_tot.filter(estado = state_terminate).count()
-		count_tot = regla_tres(activity_terminate, activity_tot.count())
+		count_tot = regla_tres(activity_terminate, activity_tot.count()) if activity_tot.count() > 0 else 0
 	return count_tot
 
 @register.filter
