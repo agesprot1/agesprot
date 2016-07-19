@@ -37,6 +37,13 @@
 								<h3 class="name">Proyecto {{ project.nombre_proyecto }}</h3>
 								<p>{{ project.descripcion }}</p>
 								<p>
+									<div class="progress">
+										<div class="progress-bar" role="progressbar" aria-valuenow="{{ 'progress'|count_project:project.pk }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 'progress'|count_project:project.pk }}%;">
+											{{ 'progress'|count_project:project.pk }}%
+										</div>
+									</div>
+								</p>
+								<p>
 									<span class="label label-primary"><strong>{{ project.roles_project_set.count }}</strong> Integrantes</span>
 									<span class="label label-warning"><strong>{{ project.actividad_set.count }}</strong> Actividades</span>
 								</p>

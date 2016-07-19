@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, FormView
 from agesprot.apps.audit.register_activity import register_activity_profile_user
+from agesprot.apps.project.templatetags.project_filters import *
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from agesprot.apps.base.models import Tipo_estado
@@ -159,3 +160,40 @@ def delete_user_activity(request, pk, tag_url, pk_activity, pk_role):
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar el usuario de la actividad'
 	return HttpResponse(json.dumps(response), "application/json")
+
+@login_required
+def change_state_activity(request, pk, tag_url, pk_activity, state):
+	response = {}
+	if verify_user_project_administrator(pk, request.user):
+		inactive = Tipo_estado.objects.get(nombre_estado = 'Terminado')
+		activity = Actividad.objects.get(pk = pk_activity)
+		if activity.estado.nombre_estado == 'Terminado':
+			return HttpResponseRedirect(reverse_lazy('dashboard'))
+		else:
+			activity.estado = inactive
+			activity.save()
+			response['type'] = 'success'
+			response['msg'] = 'Exito al finalizar la actividad'
+			register_activity_profile_user(request.user, 'Actividad '+activity.nombre_actividad+' del proyecto '+activity.proyecto.nombre_proyecto+' has sido finalizado')
+	else:
+		response['type'] = 'error'
+		response['msg'] = 'Ha ocurrido un error'
+	return HttpResponse(json.dumps(response), "application/json")
+
+def response_data_activity_chart(request, pk, tag_url, pk_activity):
+	response_tot = {}
+	count = 0
+	activity = Actividad.objects.get(pk = pk_activity)
+	for task_data in activity.tarea_set.all():
+		response_tot[count] = {}
+		response_tot[count]['id'] = str(task_data.pk)
+		response_tot[count]['name'] = task_data.nombre_tarea
+		response_tot[count]['day_init'] = task_data.fecha_creacion.day
+		response_tot[count]['month_init'] = task_data.fecha_creacion.month
+		response_tot[count]['year_init'] = task_data.fecha_creacion.year
+		response_tot[count]['day_end'] = task_data.fecha_entrega.day
+		response_tot[count]['month_end'] = task_data.fecha_entrega.month
+		response_tot[count]['year_end'] = task_data.fecha_entrega.year
+		count += 1
+	response_tot['response'] = 1 if count > 1 else 0
+	return HttpResponse(json.dumps(response_tot), "application/json")

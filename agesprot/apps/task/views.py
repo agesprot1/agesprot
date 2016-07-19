@@ -1,5 +1,6 @@
 from agesprot.apps.audit.register_activity import register_activity_profile_user
 from django.views.generic import DetailView, CreateView, UpdateView
+from agesprot.apps.project.templatetags.project_filters import *
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 from agesprot.apps.activity.models import Actividad
@@ -162,3 +163,22 @@ def download_document(request, pk, tag_url, pk_activity, pk_task, pk_document):
 	documento = Documento.objects.get(pk = pk_document)
 	register_activity_profile_user(request.user, 'Archivo descargado de la tarea '+documento.tarea.nombre_tarea+' de la actividad '+documento.tarea.actividad.nombre_actividad+' en el proyecto '+documento.tarea.actividad.proyecto.nombre_proyecto)
 	return redirect('%s/%s'%('/static/', documento.documento))
+
+@login_required
+def change_state_task(request, pk, tag_url, pk_activity, pk_task, state):
+	response = {}
+	if verify_user_project_administrator(pk, request.user):
+		inactive = Tipo_estado.objects.get(nombre_estado = 'Terminado')
+		task = Tarea.objects.get(pk = pk_task)
+		if task.estado.nombre_estado == 'Terminado':
+			return HttpResponseRedirect(reverse_lazy('dashboard'))
+		else:
+			task.estado = inactive
+			task.save()
+			response['type'] = 'success'
+			response['msg'] = 'Exito al finalizar la tarea'
+			register_activity_profile_user(request.user, 'Tarea '+task.nombre_tarea+' de la actividad '+task.actividad.nombre_actividad+' en el proyecto '+task.actividad.proyecto.nombre_proyecto+' has sido finalizado')
+	else:
+		response['type'] = 'error'
+		response['msg'] = 'Ha ocurrido un error'
+	return HttpResponse(json.dumps(response), "application/json")

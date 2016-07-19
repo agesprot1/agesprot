@@ -11,6 +11,7 @@ task_patterns = [
 	url(r'^upload-file/$', login_required(UploadFileView.as_view()), name = 'upload_file'),
 	url(r'^delete-document/(?P<pk_document>\d+)/$', delete_document, name = 'delete_document'),
 	url(r'^download-document/(?P<pk_document>\d+)/$', download_document, name = 'download_document'),
+	url(r'^change-state/(?P<state>\d+)/$', change_state_task, name = 'change_state_task'),
 ]
 
 urlpatterns = patterns('agesprot.apps.task.views',

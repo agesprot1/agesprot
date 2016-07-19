@@ -42,10 +42,16 @@
 							<div class="caption">
 								<h3 class="name">{{ activity.nombre_actividad }}</h3>
 								<p>{{ activity.descripcion_actividad }}</p>
-								<p>
+								<p id="s_act-{{ activity.pk }}">
 									<span class="label label-primary"><b>{{ activity.tarea_set.count }}</b> Tareas</span>
 									<span class="label label-warning"><b>{{ activity.actividad_role_set.count }}</b> Integrantes</span>
-									<span class="label label-info"><b>Estado: </b>{{ activity.estado }}</span>
+									{% if activity.estado.nombre_estado == 'Activo' %}
+										<a href="{% url 'change_state_activity' project.pk project.tag_url activity.pk 0 %}" class="change activity-{{ activity.pk }}" id="{{ activity.pk }}">
+											<span class="label label-info"><b>Estado: </b>{{ activity.estado }}</span>
+										</a>
+									{% else %}
+										<span class="label label-info"><b>Estado: </b>{{ activity.estado }}</span>
+									{% endif %}
 								</p>
 								{% if activity.estado.nombre_estado == 'Activo' or request.user.pk|verify_admin_project:project.pk %}
 									<a href="{% url 'detail_activities' project.pk project.tag_url activity.pk %}" class="btn btn-primary">Ingresar</a>
@@ -75,6 +81,36 @@
 {% endblock content %}
 
 {% block content_script %}
+	$(document).on("click", ".change", function(){
+		var id = $(this).attr('id');
+		var href = $(this).attr('href');
+		console.log(href)
+		Lobibox.alert('info', {
+			title: "Alerta",
+			msg: "¿Desea finalizar la actividad seleccionada?",
+			buttons:{
+				yes: {
+					'class': 'btn btn-warning'
+				},
+				no: {
+					'class': 'btn btn-primary'
+				}
+			},
+			callback: function(lobibox, type){
+				if(type == 'yes'){
+					$.get(href, function(data){
+						show_message(data.type, data.msg);
+						$('.activity-'+id).remove();
+						$('#s_act-'+id).append('<span class="label label-info"><b>Estado: </b>Terminado</span>')
+					});
+				}
+				else{
+					show_message('success', 'Cancelado por el usuario');
+				}
+			}
+		});
+		return false;
+	});
 	var options = {
 		valueNames: ['name'],
 		page: 4,

@@ -63,7 +63,7 @@ function show_loading(id){
 	$('#'+id).append(
 		"<div class='text-center' id='loading'>"+
 			"<img src='/static/img/loading.gif' alt='Cargando'>"+
-			"<h3>Cargando gráfico</h3>"+
+			"<h3>Cargando datos</h3>"+
 		"</div>"
 	);
 }

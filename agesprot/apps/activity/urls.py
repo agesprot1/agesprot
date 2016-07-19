@@ -8,6 +8,8 @@ activity_patterns = [
 	url(r'^detail-activity/$', login_required(DetailActivitieView.as_view()), name = 'detail_activities'),
 	url(r'^add-user-activity/$', login_required(UserRoleActivitieView.as_view()), name = 'add_user_activity'),
 	url(r'^delete-user-activity/(?P<pk_role>\d+)/$', delete_user_activity, name = 'delete_user_activity'),
+	url(r'^change-state/(?P<state>\d+)/$', change_state_activity, name = 'change_state_activity'),
+	url(r'^data-chart/$', response_data_activity_chart, name = 'response_data_activity_chart'),
 	url(r'^task/', include('agesprot.apps.task.urls')),
 ]
 

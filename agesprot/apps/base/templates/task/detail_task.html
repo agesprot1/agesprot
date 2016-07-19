@@ -94,9 +94,11 @@
 {% endblock content %}
 
 {% block content_script %}
+	show_loading('comments-url');
 	$.ajax({
 		url: "{% url 'create_comment_task' project.pk project.tag_url object.actividad.pk object.pk %}",
 		success: function(data){
+			$('#loading').remove();
 			$("#comments-url").html(data);
 		}
 	});

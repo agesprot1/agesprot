@@ -7,6 +7,7 @@
 {% block content_head %}
 	<script src="{% static 'js/list.min.js' %}"></script>
 	<script src="{% static 'js/list.pagination.min.js' %}"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 {% endblock content_head %}
 
 {% block content %}
@@ -15,9 +16,7 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="content-head">
-					<h1>
-						{{ title }}
-					</h1>
+					<h1>{{ title }}</h1>
 				</div>
 			</div>
 			{% for message in messages %}
@@ -31,6 +30,8 @@
 						<h2>{{ object.nombre_actividad }}</h2>
 						<p><i class="glyphicon glyphicon-calendar"></i> <b>Fecha entrega: </b>{{ object.fecha_entrega }}</p>
 						<p>{{ object.descripcion_actividad }}</p>
+						<h3>Gráfico Gantt de la actividad</h3>
+						<div id="chart_activity"></div>
 					</div>
 					<div class="col-md-12">
 						<h1 class="text-center">
@@ -55,7 +56,17 @@
 											<p>{{ task.descripcion_tarea }}</p>
 											<p><i class="glyphicon glyphicon-calendar"></i> <b>Fecha entrega: </b>{{ task.fecha_entrega }}</p>
 											<p><i class="glyphicon glyphicon-user"></i> <b>Creado por: </b>{{ task.usuario.profileuser.get_full_name }}</p>
-											<p><i class="glyphicon glyphicon-certificate"></i> <b>Estado: </b>{{ task.estado }}</p>
+											<p id="s_task-{{ task.pk }}">
+												<i class="glyphicon glyphicon-certificate"></i>
+												<b>Estado: </b>
+												{% if task.estado.nombre_estado == 'Proceso' %}
+													<a href="{% url 'change_state_task' project.pk project.tag_url object.pk task.pk 0 %}" class="change task-{{ task.pk }}" id="{{ task.pk }}">
+														<span class="label label-primary">{{ task.estado }}</span>
+													</a>
+												{% else %}
+													<span class="label label-primary">{{ task.estado }}</span>
+												{% endif %}
+											</p>
 											{% if task.estado.nombre_estado == 'Proceso' or request.user.pk|verify_admin_project:project.pk %}
 												<a href="{% url 'detail_task' project.pk project.tag_url object.pk task.pk %}" class="btn btn-primary">Seleccionar</a>
 											{% endif %}
@@ -127,6 +138,85 @@
 {% endblock content %}
 
 {% block content_script %}
+	show_loading('chart_activity');
+	google.charts.load('current', {'packages':['gantt']});
+	google.charts.setOnLoadCallback(request_ajax);
+	function request_ajax(){
+		$.ajax({
+			url: "/project/{{ project.pk }}/{{ project.tag_url }}/activities/{{ object.pk }}/data-chart/",
+			dataType: "json",
+			type: 'GET',
+			cache: false,
+			contentType: false,
+			processData: false,
+			success: function(response){
+				var response_convert = []
+				$('#loading').remove();
+				$.each(response, function (key, item) {
+					if(item.id){
+						var val = [item.id, item.name, item.name, new Date(item.year_init, item.month_init, item.day_init), new Date(item.year_end, item.month_end, item.day_end), null, 100, null]
+						response_convert.push(val);
+					}
+				});
+				if(response['response'] == 1){
+					drawchart(response_convert);
+				}else{
+					$('#chart_activity').append(
+						"<div class='text-center'>"+
+							"<h3>Debe de crear más tareas para la visualización del gráfico Gantt.</h3>"+
+						"</div>"
+					);
+				}
+			}
+		});
+	}
+	function drawchart(response_convert){
+		var data = new google.visualization.DataTable();
+		data.addColumn('string', 'Task ID');
+		data.addColumn('string', 'Task Name');
+		data.addColumn('string', 'Resource');
+		data.addColumn('date', 'Start Date');
+		data.addColumn('date', 'End Date');
+		data.addColumn('number', 'Duration');
+		data.addColumn('number', 'Percent Complete');
+		data.addColumn('string', 'Dependencies');
+		data.addRows(response_convert);
+		var options = {
+			height: data.getNumberOfRows() * 45 + 30,
+		};
+		var chart = new google.visualization.Gantt(document.getElementById('chart_activity'));
+		chart.draw(data, options);
+	}
+	$(document).on("click", ".change", function(){
+		var id = $(this).attr('id');
+		var href = $(this).attr('href');
+		console.log(href)
+		Lobibox.alert('info', {
+			title: "Alerta",
+			msg: "¿Desea finalizar la tarea seleccionada?",
+			buttons:{
+				yes: {
+					'class': 'btn btn-warning'
+				},
+				no: {
+					'class': 'btn btn-primary'
+				}
+			},
+			callback: function(lobibox, type){
+				if(type == 'yes'){
+					$.get(href, function(data){
+						show_message(data.type, data.msg);
+						$('.task-'+id).remove();
+						$('#s_task-'+id).append('<span class="label label-primary">Terminado</span>')
+					});
+				}
+				else{
+					show_message('success', 'Cancelado por el usuario');
+				}
+			}
+		});
+		return false;
+	});
 	var options = {
 		valueNames: ['name'],
 		page: 6,
