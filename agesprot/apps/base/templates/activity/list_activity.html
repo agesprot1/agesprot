@@ -42,6 +42,7 @@
 							<div class="caption">
 								<h3 class="name">{{ activity.nombre_actividad }}</h3>
 								<p>{{ activity.descripcion_actividad }}</p>
+								<p><i class="glyphicon glyphicon-calendar"></i> <b>Fecha entrega: </b>{{ activity.fecha_entrega }}</p>
 								<p id="s_act-{{ activity.pk }}">
 									<span class="label label-primary"><b>{{ activity.tarea_set.count }}</b> Tareas</span>
 									<span class="label label-warning"><b>{{ activity.actividad_role_set.count }}</b> Integrantes</span>
@@ -56,7 +57,7 @@
 								{% if activity.estado.nombre_estado == 'Activo' or request.user.pk|verify_admin_project:project.pk %}
 									<a href="{% url 'detail_activities' project.pk project.tag_url activity.pk %}" class="btn btn-primary">Ingresar</a>
 								{% endif %}
-								{% if request.user.pk|verify_admin_project:project.pk %}
+								{% if activity.estado.nombre_estado == 'Activo' and request.user.pk|verify_admin_project:project.pk %}
 									<a href="{% url 'update_activities' project.pk project.tag_url activity.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
 									<a href="{% url 'delete_activities' project.pk project.tag_url activity.pk %}" id="{{ activity.pk }}" class="btn btn-danger delete">Eliminar</a>
 								{% endif %}
@@ -113,7 +114,7 @@
 	});
 	var options = {
 		valueNames: ['name'],
-		page: 4,
+		page: 6,
 		plugins: [
 			ListPagination({})
 		]

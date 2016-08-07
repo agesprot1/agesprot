@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from agesprot.apps.audit.register_activity import register_activity_profile_user
+from agesprot.apps.audit.utils import register_activity_profile_user
 from django.contrib.auth.decorators import permission_required
 from django.views.generic.list import ListView
 from django.http import HttpResponse
@@ -28,7 +28,7 @@ class ListPrioridadProjectView(ListView):
 		context['title'] = 'Lista de Prioridades de projectos'
 		return context
 
-@permission_required('is_staff')
+@permission_required('is_superuser')
 def form_role(request, role_pk):
 	response = {}
 	try:
@@ -55,7 +55,7 @@ def form_role(request, role_pk):
 		form = RoleProjectForm(instance = role)
 	return render(request, var_dir_template+'form_role.html', {'forms': form, 'role': role_pk, 'title': 'Roles de proyectos'})
 
-@permission_required('is_staff')
+@permission_required('is_superuser')
 def delete_role(request, role_pk):
 	response = {}
 	role = Tipo_role.objects.get(pk = role_pk)
@@ -65,7 +65,7 @@ def delete_role(request, role_pk):
 	response['msg'] = 'Exito al eliminar el rol'
 	return HttpResponse(json.dumps(response), "application/json")
 
-@permission_required('is_staff')
+@permission_required('is_superuser')
 def form_prioridad(request, prioridad_pk):
 	response = {}
 	try:
@@ -93,7 +93,7 @@ def form_prioridad(request, prioridad_pk):
 		form = PrioridadProjectForm(instance = prioridad)
 	return render(request, var_dir_template+'form_prioridad.html', {'forms': form, 'prioridad': prioridad_pk, 'title': 'prioridades de proyectos'})
 
-@permission_required('is_staff')
+@permission_required('is_superuser')
 def delete_prioridad(request, prioridad_pk):
 	response = {}
 	prioridad = Tipo_prioridad.objects.get(pk = prioridad_pk)

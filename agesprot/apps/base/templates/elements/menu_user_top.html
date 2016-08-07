@@ -6,19 +6,27 @@
 		<span class="icon-bar"></span>
 		<span class="icon-bar"></span>
 	</button>
-	<a href="{% url 'dashboard' %}" class="navbar-brand url color-white">AgesProt v1.0</a>
+	<a href="{% url 'my_list_project' %}" class="navbar-brand url color-white">AgesProt v1.0</a>
 </div>
 <ul class="nav navbar-top-links navbar-right">
+	<li class="dropdown">
+		<a class="dropdown-toggle color-white" data-toggle="dropdown" href="#" aria-expanded="true" id="notification">
+			<i class="fa fa-bell fa-fw"></i>
+			<!--<small class="color-red number_notification">2</small>-->
+			<i class="fa fa-caret-down"></i>
+		</a>
+		<ul class="dropdown-menu dropdown-alerts" id="content-alert"></ul>
+	</li>
 	<li class="dropdown">
 		<a class="dropdown-toggle color-white" data-toggle="dropdown" href="#" aria-expanded="false">
 			<img src="{% static user.profileuser.get_foto %}" class="img-responsive img-rounded" style="width: 20px; display: inline-block;"> {{ user.first_name }} <i class="fa fa-caret-down"></i>
 		</a>
 		<ul class="dropdown-menu dropdown-user">
 			<li>
-				<a href="{% url 'profile' %}" class="url"><i class="fa fa-user fa-fw"></i> Mi perfil</a>
+				<a href="{% url 'profile' %}" rel="no-refresh"><i class="fa fa-user fa-fw"></i> Mi perfil</a>
 			</li>
 			<li>
-				<a href="{% url 'logout' %}" class="url"><i class="fa fa-sign-out fa-fw"></i> Cerrar sesión</a>
+				<a href="{% url 'logout' %}" rel="no-refresh"><i class="fa fa-sign-out fa-fw"></i> Cerrar sesión</a>
 			</li>
 		</ul>
 	</li>

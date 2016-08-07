@@ -1,5 +1,7 @@
 Django==1.9.6
 django-mail-templated==2.6.2
+django-realtime==1.1
 gunicorn==19.5.0
 Pillow==2.8.0
 psycopg2==2.6.1
+six==1.10.0

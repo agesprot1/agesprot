@@ -149,10 +149,11 @@
 				$('#loading').remove();
 				$.each(response, function (key, item) {
 					if(item.id){
-						var val = [item.id, item.name, item.name, new Date(item.year_init, item.month_init, item.day_init), new Date(item.year_end, item.month_end, item.day_end), null, item.percent, null]
+						var val = [item.id, item.name, item.name, new Date(item.year_init+'/'+item.month_init+'/'+item.day_init), new Date(item.year_end+'/'+item.month_end+'/'+item.day_end), null, item.percent, null]
 						response_convert.push(val);
 					}
 				});
+				console.log(response_convert)
 				if(response['response'] == 1){
 					drawchart(response_convert);
 				}else{

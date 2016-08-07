@@ -27,7 +27,7 @@
 			{% endfor %}
 			<div class="row">
 				<div class="col-md-8">
-					{% if request.user.pk|verify_user_activity:object.actividad.pk %}
+					{% if request.user.pk|verify_user_activity:object.actividad.pk and object.estado.nombre_estado == 'Proceso' %}
 						<div class="col-md-12 content">
 							<h3>Comentarios</h3>
 							<div id="comments-url"></div>
@@ -81,7 +81,7 @@
 								<h4>Vaya, no se encontraron documentos.</h4>
 							</div>
 						{% endfor %}
-						{% if request.user.pk|verify_user_activity:object.actividad.pk %}
+						{% if request.user.pk|verify_user_activity:object.actividad.pk and object.estado.nombre_estado == 'Proceso' %}
 							<div class="col-md-12 text-center" style="margin-top: 10px;">
 								<a href="{% url 'upload_file' project.pk project.tag_url object.actividad.pk object.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Subir archivo</a>
 							</div>

@@ -20,8 +20,23 @@ box_shadow(args)
 	-moz-box-shadow args
 	box-shadow args
 
+border_radius(args)
+	border-radius args
+	-moz-border-radius args
+	-webkit-border-radius args
+
 body
 	background-color mid_blue
+
+.color-red
+	color white
+	background-color #e74c3c
+	font-weight bold
+	padding 2px 4px
+	position absolute
+	top 3px
+	left 25px
+	border-radius 3px 3px
 
 .errorlist
 	color red_color
@@ -136,3 +151,17 @@ li.dropdown
 
 .thumbnail
 	padding 0px
+
+.circle-fa
+	background-color blue_color
+	padding 5px
+	color white
+	width 25px
+	height 25px
+	border_radius(200px 200px 200px 200px)
+
+.dropdown-alerts
+	color #999999
+
+.navbar-top-links .dropdown-menu li .row a
+	padding 0

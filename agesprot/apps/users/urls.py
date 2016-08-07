@@ -4,10 +4,10 @@ from django.views.generic import TemplateView
 from django.conf.urls import patterns, url
 from .views import *
 
-login_forbidden = user_passes_test(lambda u: u.is_anonymous(), '/dashboard/')
+login_forbidden = user_passes_test(lambda u: u.is_anonymous(), '/project/my-list-project/')
 
 urlpatterns = patterns('agesprot.apps.users.views',
-	url(r'^list-user/$', permission_required('is_staff')(UserListView.as_view()), name = 'list_user'),
+	url(r'^list-user/$', permission_required('is_superuser')(UserListView.as_view()), name = 'list_user'),
 	url(r'^change-state/$', 'change_state_user', name = 'change_state_user'),
 	url(r'^delete-user/(?P<user>\d+)/$', 'delete_user', name = 'delete_user'),
 	url(r'^update-user/(?P<user_pk>\d+)/$', 'update_user', name = "update_user"),

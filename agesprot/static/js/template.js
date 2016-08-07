@@ -37,8 +37,43 @@ $(document).on("click", ".delete", function(){
 	});
 	return false;
 });
-$(document).on("click", ".url", function(){
-	history.pushState({url: $(this).attr('href')}, $(this).attr('href'), '');
+$(document).on("click", "#notification", function(){
+	$('#content-alert').empty();
+	show_loading('content-alert');
+	$.ajax({
+		url: "/notification/",
+		success: function(data){
+			$('#loading').remove();
+			console.log(data)
+			$.each(data, function (key, item) {
+				$('#content-alert').append(
+					'<li>'+
+						'<div class="row">'+
+							'<div style="padding: 5px 10px;">'+
+								'<div class="col-md-1">'+
+									'<i class="fa '+item.icon+' fa-fw circle-fa"></i>  '+
+								'</div>'+
+								'<div class="col-md-10">'+
+									item.titulo_notificacion+
+								'</div>'+
+								'<div class="col-md-12">'+
+									'<span class="pull-right small">'+item.fecha_notificacion+'</span>'+
+								'</div>'+
+							'</div>'+
+						'</div>'+
+					'</li>'+
+					'<li class="divider"></li>'
+				);
+			});
+			$('#content-alert').append(
+				'<li>'+
+					'<a href="/notification/me/" class="text-center">'+
+						'<b>Ver todos</b> <i class="fa fa-angle-double-right"></i>'+
+					'</a>'+
+				'</li>'
+			);
+		}
+	});
 });
 // end $(document)
 
@@ -62,17 +97,15 @@ function change(state){
 function show_loading(id){
 	$('#'+id).append(
 		"<div class='text-center' id='loading'>"+
-			"<img src='/static/img/loading.gif' alt='Cargando'>"+
-			"<h3>Cargando datos</h3>"+
+			"<img src='/static/img/loading.gif' alt='Cargando' style='width: 50px;'>"+
+			"<h4>Cargando datos</h4>"+
 		"</div>"
 	);
 }
 // end function JS
 
 // init other JS
-$(window).on("popstate", function(e) {
-	console.log(e.originalEvent.state);
-});
+
 (function(original){
 	history.pushState = function(state){
 		change(state);

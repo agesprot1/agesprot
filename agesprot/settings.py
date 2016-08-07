@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 	'agesprot.apps.activity',
 	'agesprot.apps.task',
 	'agesprot.apps.audit',
+	'agesprot.apps.notification',
 	'agesprot.apps.project.templatetags',
 ]
 
@@ -145,7 +146,7 @@ AUTH_PASSWORD_VALIDATORS = [
 	},
 ]
 
-LOGIN_REDIRECT_URL = '/dashboard'
+LOGIN_REDIRECT_URL = '/project/my-list-project/'
 
 LOGIN_URL = '/users/login/'
 

@@ -23,4 +23,6 @@ urlpatterns = patterns('agesprot.apps.project.views',
 	url(r'^new-project/$', login_required(NewProjectView.as_view()), name = 'new_project'),
 	url(r'^list-project/$', login_required(ListProjectView.as_view()), name = 'list_project'),
 	url(r'^my-list-project/$', login_required(ListProjectUserView.as_view()), name = 'my_list_project'),
+	url(r'^restriction-project/(?P<pk_project>\d+)/$', login_required(RestrictionProjectView.as_view()), name = 'RestrProject'),
+	url(r'^verify-project/(?P<tag_url>[\w\-]+)/(?P<type_request>[\w\-]+)/$', 'verify_project', name = 'verify_project'),
 )

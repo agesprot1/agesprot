@@ -6,7 +6,7 @@ from agesprot.apps.base.models import Tipo_estado, Tipo_role
 
 class Proyecto(models.Model):
 	nombre_proyecto = models.CharField(max_length = 45)
-	descripcion = models.CharField(max_length = 200)
+	descripcion = models.CharField(max_length = 300)
 	fecha_inicio = models.DateField()
 	fecha_final = models.DateField()
 	estado = models.ForeignKey(Tipo_estado, default = 1)

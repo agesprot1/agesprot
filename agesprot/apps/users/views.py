@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
-from agesprot.apps.audit.register_activity import register_activity_profile_user
 from django.contrib.auth.decorators import permission_required, login_required
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
+from agesprot.apps.audit.utils import register_activity_profile_user
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect, HttpResponse
@@ -54,6 +54,7 @@ class ResetPasswordRequestView(FormView):
 					'subject': 'Cambio de Contraseña'
 				}
 				register_activity_profile_user(user, 'Solicitud cambio de contraseña')
+				#register_notification(user, 'fa fa-unlock', 'Solicitud Cambio de contraseña', '#')
 				email_template_name = 'email/password_reset_subject.html'
 				send_mail(email_template_name, data, settings.DEFAULT_FROM_EMAIL, [user.email])
 				result = self.form_valid(form)
@@ -147,7 +148,7 @@ def update_user(request, user_pk):
 		form = UserUpdateForm(instance = user)
 	return render(request, var_dir_template+'form_update_user.html', {'forms': form, 'user_data': user_pk, 'next_url': next_url, 'title': 'Edición de usuarios'})
 
-@permission_required('is_staff')
+@permission_required('is_superuser')
 def change_state_user(request):
 	user = request.GET.get('user')
 	state = True if request.GET.get('state') == 'true' else False
@@ -171,7 +172,7 @@ def change_state_user(request):
 		response['msg'] = 'Usuario no encontrado'
 	return HttpResponse(json.dumps(response), "application/json")
 
-@permission_required('is_staff')
+@permission_required('is_superuser')
 def delete_user(request, user):
 	response = {}
 	user = User.objects.get(pk = user)

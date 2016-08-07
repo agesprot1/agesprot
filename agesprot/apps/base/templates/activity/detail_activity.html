@@ -5,6 +5,8 @@
 {% load project_filters %}
 
 {% block content_head %}
+	<link rel="stylesheet" href="{% static 'css/chosen.css' %}">
+	<script src="{% static 'js/chosen.js' %}"></script>
 	<script src="{% static 'js/list.min.js' %}"></script>
 	<script src="{% static 'js/list.pagination.min.js' %}"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -36,7 +38,7 @@
 					<div class="col-md-12">
 						<h1 class="text-center">
 							Tareas de la actividad
-							{% if request.user.pk|verify_user_activity:object.pk %}
+							{% if request.user.pk|verify_user_activity:object.pk and object.estado.nombre_estado == 'Activo' %}
 								<a href="{% url 'add_task_activity' project.pk project.tag_url object.pk %}" class="btn btn-default open-modal" data-toggle="modal" data-target="#Modal" style="float: right;"><i class="glyphicon glyphicon-plus"></i> | Crear tarea</a>
 							{% endif %}
 						</h1>
@@ -70,7 +72,7 @@
 											{% if task.estado.nombre_estado == 'Proceso' or request.user.pk|verify_admin_project:project.pk %}
 												<a href="{% url 'detail_task' project.pk project.tag_url object.pk task.pk %}" class="btn btn-primary">Seleccionar</a>
 											{% endif %}
-											{% if request.user.pk|verify_admin_project:project.pk %}
+											{% if request.user.pk|verify_admin_project:project.pk and task.estado.nombre_estado == 'Proceso' %}
 												<a href="{% url 'update_task' project.pk project.tag_url object.pk task.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Editar</a>
 												<a href="{% url 'delete_task' project.pk project.tag_url object.pk task.pk %}" id="{{ task.pk }}" class="btn btn-danger delete">Eliminar</a>
 											{% endif %}
@@ -109,7 +111,7 @@
 											<small>{{ participant.role.role }}</small>
 										</p>
 									</div>
-									{% if request.user.pk|verify_admin_project:project.pk %}
+									{% if request.user.pk|verify_admin_project:project.pk and object.estado.nombre_estado == 'Activo' %}
 										<div class="col-md-1">
 											<a href="{% url 'delete_user_activity' project.pk project.tag_url object.pk participant.pk %}" class="btn btn-danger delete" id="{{ participant.pk }}">
 												<i class="glyphicon glyphicon-remove"></i>
@@ -124,7 +126,7 @@
 									</p>
 								</div>
 							{% endfor %}
-							{% if request.user.pk|verify_admin_project:project.pk %}
+							{% if request.user.pk|verify_admin_project:project.pk and object.estado.nombre_estado == 'Activo' %}
 								<div class="col-md-12 text-center">
 									<a href="{% url 'add_user_activity' project.pk project.tag_url object.pk %}" class="btn btn-success open-modal" data-toggle="modal" data-target="#Modal">Agregar usuario</a>
 								</div>

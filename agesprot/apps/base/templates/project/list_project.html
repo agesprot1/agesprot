@@ -36,6 +36,9 @@
 							<div class="caption">
 								<h3 class="name">Proyecto {{ project.nombre_proyecto }}</h3>
 								<p>{{ project.descripcion }}</p>
+								<p><i class="glyphicon glyphicon-calendar"></i> <b>Fecha entrega: </b>{{ project.fecha_final }}</p>
+								<p><i class="fa fa-user fa-fw"></i> <b>Creado por:</b> {{ project.user }}</p>
+								<p><i class="glyphicon glyphicon-certificate"></i> <b>Estado: </b><span class="label label-primary">{{ project.estado }}</span></p>
 								<p>
 									<div class="progress">
 										<div class="progress-bar" role="progressbar" aria-valuenow="{{ 'progress'|count_project:project.pk }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ 'progress'|count_project:project.pk }}%;">

@@ -18,7 +18,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a href="{% url 'landing' %}" class="navbar-brand">
+				<a href="{% url 'landing' %}" class="navbar-brand" rel="no-refresh">
 					<img src="{% static 'img/logo.jpg' %}" alt="" class="logo-custom">
 				</a>
 			</div>
@@ -28,8 +28,8 @@
 					<li><a href="#funciones">Funciones</a></li>
 					<li><a href="#experiencia">Experiencia</a></li>
 					<li><a href="#objetivos">Objetivos</a></li>
-					<li><a href="{% url 'login' %}">Ingresar</a></li>
-					<li><a href="{% url 'registrate' %}">Registrarme</a></li>
+					<li><a href="{% url 'login' %}" rel="no-refresh">Ingresar</a></li>
+					<li><a href="{% url 'registrate' %}" rel="no-refresh">Registrarme</a></li>
 				</ul>
 			</div>
 		</div>

@@ -1,0 +1,19 @@
+{% extends 'layout/base.html' %}
+
+{% load static %}
+
+{% block content %}
+	<div id="wrapper">
+		{% include 'elements/menu_top.html' %}
+		<div id="page-wrapper">
+			<div class="row">
+				<div class="text-center col-md-12" style="margin-top: 100px;">
+					<img src="{% static 'img/oops.png' %}" style="width: 150px;">
+					<h1>Error de acceso en el proyecto {{ pk_project.nombre_proyecto }}.</h1>
+					<h4>Vaya, al parecer no estás agregado en el proyecto y por eso no puedes acceder. Ponte en contácto con el administrador del proyecto para que puedas participar dentro del mismo.</h4>
+					<h4><strong>Correo electrónico:</strong> {{ pk_project.user.email }}</h4>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock content %}

@@ -14,6 +14,11 @@
 						{{ form.nombre_proyecto.errors }}
 					</div>
 					<div class="form-group col-md-12">
+						<label>{{ form.tag_url.label }}</label>
+						{{ form.tag_url }}
+						{{ form.tag_url.errors }}
+					</div>
+					<div class="form-group col-md-12">
 						<label>{{ form.descripcion.label }}</label>
 						{{ form.descripcion }}
 						{{ form.descripcion.errors }}
@@ -32,7 +37,7 @@
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-				<input type="submit" value="Crear" class="btn btn-success"/>
+				<input type="submit" value="Enviar" class="btn btn-success"/>
 			</div>
 		</form>
 	</div>
@@ -53,4 +58,25 @@
 	$(".date_end").on("dp.change", function (e) {
 		$('.date_init').data("DateTimePicker").maxDate(e.date);
 	});
+	$('#id_nombre_proyecto').keyup(function(){
+		var string = '';
+		$.each($(this).val().split(''), function (key, item) {
+			string += item.replace('.', '-').replace(',', '-').replace(' ', '-');
+		});
+		$('#id_tag_url').val(string.toLowerCase());
+	});
+	$("form").submit(function(event){
+		return check_exist();
+	});
+	function check_exist(){
+		var returnVal = true;
+		$.ajaxSetup({async: false});
+		$.get('/project/verify-project/'+$('#id_tag_url').val()+'/{{ type_request }}/', function(data){
+			if(data.response == 1){
+				alert('Ya tienes creado un proyecto con el nombre de '+$('#id_nombre_proyecto').val());
+				returnVal = false;
+			}
+		});
+		return returnVal;
+	}
 </script>

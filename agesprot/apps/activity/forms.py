@@ -12,7 +12,7 @@ class ActivitieForm(forms.ModelForm):
 		exclude = ['proyecto', 'estado']
 		widgets = {
 			'nombre_actividad': TextInput(attrs = {'class': 'form-control', 'maxlength': '45', 'required': True}),
-			'descripcion_actividad': Textarea(attrs = {'rows': 5, 'class': 'form-control', 'maxlength': '100', 'required': True}),
+			'descripcion_actividad': Textarea(attrs = {'rows': 5, 'class': 'form-control', 'maxlength': '300', 'required': True}),
 			'fecha_entrega': TextInput(attrs = {'class': 'form-control date', 'required': True}),
 		}
 		labels = {
@@ -26,7 +26,7 @@ class ActivitieForm(forms.ModelForm):
 
 	def __init__(self, *args, **kwargs):
 		super(ActivitieForm, self).__init__(*args, **kwargs)
-		self.fields['prioridad'] = forms.ChoiceField(label = "Prioridad", choices = [('', 'Seleccione un prioridad')]+[(x.pk, x.nombre_prioridad) for x in Tipo_prioridad.objects.all()], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))
+		self.fields['prioridad'] = forms.ChoiceField(label = "Prioridad", choices = [('', 'Seleccione un prioridad')]+[(x.pk, x.nombre_prioridad) for x in Tipo_prioridad.objects.all()], widget = forms.Select(attrs = {'class': 'form-control chosen', 'required': True}))
 
 class UserRoleForm(forms.ModelForm):
 	class Meta:
@@ -44,4 +44,4 @@ class UserRoleForm(forms.ModelForm):
 		proyecto = kwargs.pop('proyecto', None)
 		user_list = [x.role.pk for x in Actividad_role.objects.filter(actividad = kwargs.pop('actividad', None))]
 		super(UserRoleForm, self).__init__(*args, **kwargs)
-		self.fields['role'] = forms.ChoiceField(label = "Usuario", choices = [('', 'Seleccione un usuario')]+[(x.pk, x.user.first_name+" "+x.user.last_name+" - "+x.user.email) for x in Roles_project.objects.filter(proyecto = proyecto).exclude(pk__in = user_list)], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))
+		self.fields['role'] = forms.ChoiceField(label = "Usuario", choices = [('', 'Seleccione un usuario')]+[(x.pk, x.user.first_name+" "+x.user.last_name+" - "+x.user.email) for x in Roles_project.objects.filter(proyecto = proyecto).exclude(pk__in = user_list)], widget = forms.Select(attrs = {'class': 'form-control chosen', 'required': True}))

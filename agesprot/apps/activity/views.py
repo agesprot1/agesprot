@@ -1,13 +1,14 @@
 # -*- encoding: utf-8 -*-
 from django.views.generic import ListView, CreateView, UpdateView, DetailView, FormView
-from agesprot.apps.audit.register_activity import register_activity_profile_user
+from agesprot.apps.notification.utils import register_notification
 from agesprot.apps.project.templatetags.project_filters import *
 from django.contrib.messages.views import SuccessMessageMixin
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from agesprot.apps.base.models import Tipo_estado
 from agesprot.apps.project.models import Proyecto
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
+from agesprot.apps.audit.utils import *
 from django.shortcuts import render
 from .models import *
 from .forms import *
@@ -31,6 +32,11 @@ class ListActivitiesView(ListView):
 	template_name = var_dir_template+'list_activity.html'
 	model = Actividad
 
+	def get(self, request, **kwargs):
+		verify = verify_user_project(self.kwargs['pk'], self.request.user)
+		detail_project = Proyecto.objects.get(pk = self.kwargs['pk'])
+		return super(ListActivitiesView, self).get(request, **kwargs) if verify is True else HttpResponseRedirect(reverse('RestrProject', kwargs = {'pk_project': detail_project.pk}))
+
 	def get_context_data(self, **kwargs):
 		context = super(ListActivitiesView, self).get_context_data(**kwargs)
 		data_project = Proyecto.objects.get(pk = self.kwargs['pk'])
@@ -40,7 +46,7 @@ class ListActivitiesView(ListView):
 
 	def get_queryset(self):
 		verify_state_activities()
-		return Actividad.objects.filter(proyecto = self.kwargs['pk']).order_by('nombre_actividad')
+		return Actividad.objects.filter(proyecto = self.kwargs['pk']).order_by('-fecha_entrega')
 
 class NewActivitieView(SuccessMessageMixin, CreateView):
 	template_name = var_dir_template+'form_activity.html'
@@ -61,6 +67,9 @@ class NewActivitieView(SuccessMessageMixin, CreateView):
 		form.instance.estado = Tipo_estado.objects.get(nombre_estado = 'Activo')
 		form_data = form.save()
 		register_activity_profile_user(self.request.user, 'Actividad '+form_data.nombre_actividad+' creada en el proyecto '+proyecto.nombre_proyecto)
+		register_activity_project(self.request.user, proyecto, 'Actividad '+form_data.nombre_actividad+' creada en el proyecto '+proyecto.nombre_proyecto)
+		for users in proyecto.roles_project_set.all():
+			register_notification(users.user, 'fa-briefcase', 'La actividad <a href="/project/'+str(proyecto.pk)+'/'+proyecto.tag_url+'/activities/'+str(form_data.pk)+'/detail-activity/">'+form_data.nombre_actividad+'</a> ha sido creada en el proyecto <a href="/project/'+str(proyecto.pk)+'/'+proyecto.tag_url+'/">'+proyecto.nombre_proyecto+'</a>')
 		return super(NewActivitieView, self).form_valid(form)
 
 	def get_success_url(self):
@@ -91,6 +100,9 @@ class UpdateActivitieView(SuccessMessageMixin, UpdateView):
 		form.instance.estado = estado.get(nombre_estado = 'Activo') if form.cleaned_data['fecha_entrega'] >= datetime.datetime.now().date() else estado.get(nombre_estado = 'Terminado')
 		form_data = form.save()
 		register_activity_profile_user(self.request.user, 'Actividad '+form_data.nombre_actividad+' actualizada en el proyecto '+proyecto.nombre_proyecto)
+		register_activity_project(self.request.user, proyecto, 'Actividad '+form_data.nombre_actividad+' actualizada en el proyecto '+proyecto.nombre_proyecto)
+		for users in proyecto.roles_project_set.all():
+			register_notification(users.user, 'fa-briefcase', 'La actividad <a href="/project/'+str(proyecto.pk)+'/'+proyecto.tag_url+'/activities/'+str(form_data.pk)+'/detail-activity/">'+form_data.nombre_actividad+'</a> ha sido actualizada en el proyecto <a href="/project/'+str(proyecto.pk)+'/'+proyecto.tag_url+'/">'+proyecto.nombre_proyecto+'</a>')
 		return super(UpdateActivitieView, self).form_valid(form)
 
 	def get_success_url(self):
@@ -100,6 +112,11 @@ class UpdateActivitieView(SuccessMessageMixin, UpdateView):
 class DetailActivitieView(DetailView):
 	template_name = var_dir_template+'detail_activity.html'
 	model = Actividad
+
+	def get(self, request, **kwargs):
+		verify = verify_user_project(self.kwargs['pk'], self.request.user)
+		detail_project = Proyecto.objects.get(pk = self.kwargs['pk'])
+		return super(DetailActivitieView, self).get(request, **kwargs) if verify is True else HttpResponseRedirect(reverse('RestrProject', kwargs = {'pk_project': detail_project.pk}))
 
 	def get_context_data(self, **kwargs):
 		context = super(DetailActivitieView, self).get_context_data(**kwargs)
@@ -116,6 +133,9 @@ def delete_activities(request, pk, tag_url, pk_activity):
 	response = {}
 	actividad = Actividad.objects.get(pk = pk_activity)
 	register_activity_profile_user(request.user, 'Actividad '+actividad.nombre_actividad+' eliminada del proyecto '+actividad.proyecto.nombre_proyecto)
+	register_activity_project(request.user, actividad.proyecto, 'Actividad '+actividad.nombre_actividad+' eliminada del proyecto '+actividad.proyecto.nombre_proyecto)
+	for users in actividad.proyecto.roles_project_set.all():
+		register_notification(users.user, 'fa-briefcase', 'La actividad '+actividad.nombre_actividad+' ha sido elimidada del proyecto <a href="/project/'+str(actividad.proyecto.pk)+'/'+actividad.proyecto.tag_url+'/">'+actividad.proyecto.nombre_proyecto+'</a>')
 	actividad.delete()
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar la actividad'
@@ -145,6 +165,8 @@ class UserRoleActivitieView(SuccessMessageMixin, FormView):
 		form.instance.actividad = Actividad.objects.get(pk = self.kwargs['pk_activity'])
 		form_data = form.save()
 		register_activity_profile_user(self.request.user, 'Usuario '+form_data.role.user.email+' agregado a la actividad '+form_data.actividad.nombre_actividad+' del proyecto '+form_data.actividad.proyecto.nombre_proyecto)
+		register_activity_project(self.request.user, form_data.actividad.proyecto, 'Usuario '+form_data.role.user.email+' agregado a la actividad '+form_data.actividad.nombre_actividad+' del proyecto '+form_data.actividad.proyecto.nombre_proyecto)
+		register_notification(form_data.role.user, 'fa-briefcase', 'Te han agregado a la actividad <a href="/project/'+str(form_data.actividad.proyecto.pk)+'/'+form_data.actividad.proyecto.tag_url+'/activities/'+str(form_data.actividad.pk)+'/detail-activity/">'+form_data.actividad.nombre_actividad+'</a> del proyecto <a href="/project/'+str(form_data.actividad.proyecto.pk)+'/'+form_data.actividad.proyecto.tag_url+'/">'+form_data.actividad.proyecto.nombre_proyecto+'</a>')
 		return super(UserRoleActivitieView, self).form_valid(form)
 
 	def get_success_url(self):
@@ -156,6 +178,8 @@ def delete_user_activity(request, pk, tag_url, pk_activity, pk_role):
 	response = {}
 	actividad_role = Actividad_role.objects.get(pk = pk_role)
 	register_activity_profile_user(request.user, 'Usuario '+actividad_role.role.user.email+' eliminado de la actividad '+actividad_role.actividad.nombre_actividad+' del proyecto '+actividad_role.actividad.proyecto.nombre_proyecto)
+	register_activity_project(request.user, actividad_role.actividad.proyecto, 'Usuario '+actividad_role.role.user.email+' eliminado de la actividad '+actividad_role.actividad.nombre_actividad+' del proyecto '+actividad_role.actividad.proyecto.nombre_proyecto)
+	register_notification(actividad_role.role.user, 'fa-briefcase', 'Has sido eliminado de la actividad <a href="/project/'+str(actividad_role.actividad.proyecto.pk)+'/'+actividad_role.actividad.proyecto.tag_url+'/activities/'+str(actividad_role.actividad.pk)+'/detail-activity/">'+actividad_role.actividad.nombre_actividad+'</a> en el proyecto <a href="/project/'+str(actividad_role.actividad.proyecto.pk)+'/'+actividad_role.actividad.proyecto.tag_url+'/">'+actividad_role.actividad.proyecto.nombre_proyecto+'</a>')
 	actividad_role.delete()
 	response['type'] = 'success'
 	response['msg'] = 'Exito al eliminar el usuario de la actividad'
@@ -166,15 +190,18 @@ def change_state_activity(request, pk, tag_url, pk_activity, state):
 	response = {}
 	if verify_user_project_administrator(pk, request.user):
 		inactive = Tipo_estado.objects.get(nombre_estado = 'Terminado')
-		activity = Actividad.objects.get(pk = pk_activity)
-		if activity.estado.nombre_estado == 'Terminado':
-			return HttpResponseRedirect(reverse_lazy('dashboard'))
+		actividad = Actividad.objects.get(pk = pk_activity)
+		if actividad.estado.nombre_estado == 'Terminado':
+			return HttpResponseRedirect(reverse_lazy('my_list_project'))
 		else:
-			activity.estado = inactive
-			activity.save()
+			actividad.estado = inactive
+			actividad.save()
 			response['type'] = 'success'
 			response['msg'] = 'Exito al finalizar la actividad'
-			register_activity_profile_user(request.user, 'Actividad '+activity.nombre_actividad+' del proyecto '+activity.proyecto.nombre_proyecto+' has sido finalizado')
+			register_activity_profile_user(request.user, 'Actividad '+actividad.nombre_actividad+' del proyecto '+actividad.proyecto.nombre_proyecto+' ha sido finalizado')
+			register_activity_project(request.user, actividad.proyecto, 'Actividad '+actividad.nombre_actividad+' del proyecto '+actividad.proyecto.nombre_proyecto+' has sido finalizado')
+			for users in actividad.proyecto.roles_project_set.all():
+				register_notification(users.user, 'fa-briefcase', 'La actividad <a href="/project/'+str(actividad.proyecto.pk)+'/'+actividad.proyecto.tag_url+'/activities/'+str(actividad.pk)+'/detail-activity/">'+actividad.nombre_actividad+'</a> ha sido finalizada del proyecto <a href="/project/'+str(actividad.proyecto.pk)+'/'+actividad.proyecto.tag_url+'/">'+actividad.proyecto.nombre_proyecto+'</a>')
 	else:
 		response['type'] = 'error'
 		response['msg'] = 'Ha ocurrido un error'

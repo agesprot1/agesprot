@@ -22,11 +22,20 @@
 						<thead>
 							<tr>
 								<th>Código</th>
+								<th>Usuario</th>
 								<th>Descripción</th>
 								<th>Fecha</th>
 							</tr>
 						</thead>
 						<tbody>
+							{% for audit in project.auditproject_set.all %}
+								<tr>
+									<td>{{ audit.pk }}</td>
+									<td>{{ audit.user }}</td>
+									<td>{{ audit.descripcion }}</td>
+									<td>{{ audit.fecha_auditoria }}</td>
+								</tr>
+							{% endfor %}
 						</tbody>
 					</table>
 				</div>

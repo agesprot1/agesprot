@@ -6,7 +6,7 @@ from agesprot.apps.base.models import Tipo_estado, Tipo_prioridad
 
 class Actividad(models.Model):
 	nombre_actividad = models.CharField(max_length = 45)
-	descripcion_actividad = models.CharField(max_length = 100)
+	descripcion_actividad = models.CharField(max_length = 300)
 	fecha_creacion = models.DateField(auto_now = True)
 	fecha_entrega = models.DateField()
 	estado = models.ForeignKey(Tipo_estado)

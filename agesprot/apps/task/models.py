@@ -8,7 +8,7 @@ from django.db import models
 
 class Tarea(models.Model):
 	nombre_tarea = models.CharField(max_length = 45)
-	descripcion_tarea = models.CharField(max_length = 100)
+	descripcion_tarea = models.CharField(max_length = 300)
 	fecha_creacion = models.DateField(auto_now = True)
 	fecha_entrega = models.DateField()
 	estado = models.ForeignKey(Tipo_estado)
