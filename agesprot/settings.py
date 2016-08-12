@@ -104,7 +104,7 @@ DATABASES = {
 		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 	}
 }
-
+"""
 # LOCAL
 DATABASES = {
 	'default': {
@@ -127,7 +127,7 @@ DATABASES = {
 		'PORT': '5432'
 	}
 }
-
+"""
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 

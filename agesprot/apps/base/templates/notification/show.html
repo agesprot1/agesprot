@@ -13,11 +13,13 @@
 			</div>
 			<div class="row">
 				<div class="col-md-12 content">
-					<div id="content-data"></div>
+					<div class="col-md-12">
+						<div id="content-data"></div>
+					</div>
+					<div id="loading_animation"></div>
 					<div class="col-md-12 text-center">
 						<a href="#" class="btn btn-primary load">Cargar más</a>
 					</div>
-					<div id="loading_animation"></div>
 				</div>
 			</div>
 		</div>
@@ -26,28 +28,36 @@
 
 {% block content_script %}
 	var paginate = 1;
-	show_loading('loading_animation');
 	request_ajax();
 	function request_ajax(){
-		console.log(paginate)
 		$.ajax({
 			url: "/notification/data-paginate/",
+			type: 'GET',
 			dataType: "json",
 			data: {
 				page: paginate
 			},
-			type: 'GET',
+			beforeSend: function(){
+				show_loading('loading_animation');
+				$('.load').attr('disabled', true)
+			},
 			success: function(response){
 				var response_convert = []
 				$('#loading').remove();
-				$.each(response, function (key, item) {
-					$('#content-data').append(
-						'<p>'+
-							'<i class="fa '+item.icon+' fa-fw circle-fa"></i>  '+item.titulo_notificacion+
-							'  <small>'+item.fecha_notificacion+'</small>'+
-						'</p>'
-					);
-				});
+				$('.load').attr('disabled', false)
+				if(response.type != 0){
+					$.each(response.data, function (key, item) {
+						$('#content-data').append(
+							'<p>'+
+								'<i class="fa '+item.icon+' fa-fw circle-fa"></i>  '+item.titulo_notificacion+
+								'  <small>'+item.fecha_notificacion+'</small>'+
+							'</p>'
+						);
+					});
+				}else{
+					$('#content-data').append('<h3 class="text-center">No hay mas notificaciones</h3>');
+					$('.load').attr('disabled', true)
+				}
 			}
 		});
 	}
