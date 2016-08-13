@@ -61,7 +61,7 @@
 	$('#id_nombre_proyecto').keyup(function(){
 		var string = '';
 		$.each($(this).val().split(''), function (key, item) {
-			string += item.replace('.', '-').replace(',', '-').replace(' ', '-');
+			string += item.replace('.', '-').replace(',', '-').replace(' ', '-').replace('*', '-').replace('/', '-');
 		});
 		$('#id_tag_url').val(string.toLowerCase());
 	});
