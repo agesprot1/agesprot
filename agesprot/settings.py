@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'mail_templated',
+	'djcelery',
 	'agesprot.apps.base',
 	'agesprot.apps.users',
 	'agesprot.apps.project',

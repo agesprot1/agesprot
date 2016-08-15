@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
 from django.contrib.auth.decorators import permission_required, login_required
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import render, render_to_response, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
 from agesprot.apps.audit.utils import register_activity_profile_user
@@ -12,17 +11,15 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth import get_user_model
-from django.utils.encoding import force_bytes
 from django.core.urlresolvers import reverse
 from .forms import PasswordResetRequestForm
 from django.contrib.auth.models import User
 from django.db.models.query_utils import Q
+from agesprot.apps.base.emails import *
 from django.contrib.auth import logout
-from mail_templated import send_mail
 from django.contrib import messages
 from django.template import loader
 from django.views.generic import *
-from django.conf import settings
 from .forms import *
 import json
 
@@ -44,20 +41,9 @@ class ResetPasswordRequestView(FormView):
 			user_email = form.cleaned_data["user_email"]
 			try:
 				user = User.objects.get(email = user_email)
-				data = {
-					'email': user.email,
-					'domain': request.META['HTTP_HOST'],
-					'site_name': 'AgesProt',
-					'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-					'user': user,
-					'token': default_token_generator.make_token(user),
-					'protocol': 'http://',
-					'subject': 'Cambio de Contraseña'
-				}
+				app_send_email(user, request.META['HTTP_HOST'], 'Cambio de Contraseña', 'email/password_reset_subject.html')
 				register_activity_profile_user(user, 'Solicitud cambio de contraseña')
-				register_notification(user, 'fa fa-unlock', 'Solicitud Cambio de contraseña')
-				email_template_name = 'email/password_reset_subject.html'
-				send_mail(email_template_name, data, settings.DEFAULT_FROM_EMAIL, [user.email])
+				register_notification(request.META['HTTP_HOST'], user, 'fa fa-unlock', 'Solicitud Cambio de contraseña')
 				result = self.form_valid(form)
 				messages.success(request, 'Un correo ha sido enviado ha ' +user_email+". Por favor verifica tu correo y sigue las instrucciones.")
 			except User.DoesNotExist:
