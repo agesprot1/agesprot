@@ -1,0 +1,17 @@
+{% extends "mail_templated/base.tpl" %}
+
+{% block subject %}
+	{{ subject }}
+{% endblock %}
+
+{% block html %}
+	<div style="background-color: #f5f5f5; padding: 40px 20px; text-align: center;">
+		<div style="background-color: white; margin: 0 auto; width: 80%; padding: 20px 20px; border-radius: 5px 5px; box-shadow: 1px 4px 19px -15px rgba(0,0,0,0.75);">
+			<h1>Hola {{ user.first_name }},</h1>
+			<p>Te han agregado al proyecto {{ args.nombre_proyecto }}.</p>
+			<p>Simplemente da click sobre el botón <b>Ingresar</b> para empezar a participar.</p>
+			<a href="{{ protocol }}{{ domain }}/project/{{ args.pk }}/{{ args.tag_url }}/" style="background-color: #3498db; padding: 10px 10px; border-radius: 3px 3px; color: white; text-decoration: none; margin-bottom: 10px;">Ingresar al Proyecto</a>
+			<p>Equipo de AgesProt.</p>
+		</div>
+	</div>
+{% endblock %}

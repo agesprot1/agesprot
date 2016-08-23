@@ -42,3 +42,12 @@
 		</div>
 	</div>
 {% endblock content %}
+
+{% block content_script %}
+	$.urlParam = function(name){
+		var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+		return (results != null) ? results[1] || 0: false;
+	}
+	$('#id_email').val($.urlParam('email').replace(/\%40/g, '@'))
+	$('#id_first_name').val($.urlParam('nombre').replace(/\%20/g, ' '))
+{% endblock content_script %}

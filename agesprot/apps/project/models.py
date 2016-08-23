@@ -23,3 +23,9 @@ class Roles_project(models.Model):
 	user = models.ForeignKey(User)
 	proyecto = models.ForeignKey(Proyecto)
 	role = models.ForeignKey(Tipo_role)
+
+class Invitation_project(models.Model):
+	nombre = models.CharField(max_length = 80, default = "")
+	email = models.EmailField()
+	proyecto = models.ForeignKey(Proyecto)
+	role = models.ForeignKey(Tipo_role)

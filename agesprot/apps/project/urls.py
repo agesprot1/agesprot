@@ -8,6 +8,10 @@ role_patterns = [
 	url(r'^delete-role-project/(?P<user>\d+)/$', delete_role_role_from_project, name = 'delete_role_role_from_project'),
 ]
 
+invitation_patterns = [
+	url(r'^$', login_required(InvitationProjectView.as_view()), name = 'invitate_project'),
+]
+
 proyect_patterns = [
 	url(r'^$', login_required(DetailProjectView.as_view()), name = 'project'),
 	url(r'^list-role/', include(role_patterns)),
@@ -16,6 +20,7 @@ proyect_patterns = [
 	url(r'^activities/', include('agesprot.apps.activity.urls')),
 	url(r'^audit/', login_required(AuditProjectView.as_view()), name = 'audit_project'),
 	url(r'^data-chart/$', response_data_project_chart, name = 'response_data_project_chart'),
+	url(r'^invitate/', include(invitation_patterns)),
 ]
 
 urlpatterns = patterns('agesprot.apps.project.views',

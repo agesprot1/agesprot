@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-from django.views.generic import DetailView, ListView, CreateView, UpdateView, TemplateView
+from django.views.generic import DetailView, ListView, CreateView, UpdateView, TemplateView, FormView
 from django.contrib.auth.decorators import permission_required, login_required
 from agesprot.apps.notification.utils import register_notification
 from django.contrib.messages.views import SuccessMessageMixin
@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse_lazy, reverse
 from templatetags.project_filters import *
 from agesprot.apps.audit.utils import *
+from agesprot.apps.base.emails import *
 from django.shortcuts import render
 from .models import *
 from .forms import *
@@ -144,6 +145,35 @@ class AuditProjectView(DetailView):
 		context['project'] = data_project
 		return context
 
+class InvitationProjectView(SuccessMessageMixin, CreateView):
+	template_name = var_dir_template+'invitation_project_form.html'
+	success_message = 'Invitación enviada con éxito'
+	form_class = InvitationProjectForm
+
+	def get_form_kwargs(self):
+		kwargs = super(InvitationProjectView, self).get_form_kwargs()
+		kwargs['email'] = self.request.GET.get('email')
+		return kwargs
+
+	def get_context_data(self, **kwargs):
+		context = super(InvitationProjectView, self).get_context_data(**kwargs)
+		data_project = Proyecto.objects.get(pk = self.kwargs['pk'])
+		context['title'] = 'Enviar invitación'
+		context['project'] = data_project
+		return context
+
+	def form_valid(self, form):
+		proyecto = Proyecto.objects.get(pk = self.kwargs['pk'])
+		form.instance.proyecto = proyecto
+		data_object = form.save()
+		app_send_email_invitate(data_object.email, self.request.META['HTTP_HOST'], u'Invitación al proyecto '+proyecto.nombre_proyecto, 'email/project_invitate_user.html', data_object)
+		register_activity_project(self.request.user, data_object, 'Invitacion enviada al email '+data_object.email)
+		return super(InvitationProjectView, self).form_valid(form)
+
+	def get_success_url(self):
+		data_project = Proyecto.objects.get(pk = self.kwargs['pk'])
+		return reverse('list_role', args = (data_project.pk, data_project.tag_url))
+
 @login_required
 def list_role(request, pk, tag_url):
 	project = Proyecto.objects.get(pk = pk)
@@ -171,7 +201,7 @@ def delete_role_role_from_project(request, pk, tag_url, user):
 		role_project = Roles_project.objects.get(user = user, proyecto = pk)
 		register_activity_profile_user(request.user, 'Usuario '+role_project.user.email+' eliminado del proyecto '+role_project.proyecto.nombre_proyecto)
 		register_activity_project(request.user, role_project.proyecto, 'Usuario '+role_project.user.email+' eliminado del proyecto '+role_project.proyecto.nombre_proyecto)
-		register_notification(role_project.user, 'fa-users', 'El administrador '+request.user.email+' te ha eliminado al proyecto <a href="/project/'+str(role_project.proyecto.pk)+'/'+role_project.proyecto.tag_url+'/">'+role_project.proyecto.nombre_proyecto+'</a>')
+		register_notification(request.META['HTTP_HOST'], role_project.user, 'fa-users', 'El administrador '+request.user.email+' te ha eliminado al proyecto <a href="/project/'+str(role_project.proyecto.pk)+'/'+role_project.proyecto.tag_url+'/">'+role_project.proyecto.nombre_proyecto+'</a>')
 		role_project.delete()
 		response['type'] = 'success'
 		response['msg'] = 'Exito al eliminar el usuario'
@@ -190,9 +220,10 @@ def add_user_project(request, pk, tag_url):
 			project_data = form.save(commit = False)
 			project_data.proyecto = project
 			project_data.save()
+			app_send_email(project_data.user, request.META['HTTP_HOST'], 'Proyecto '+project.nombre_proyecto, 'email/project_add_user.html', project)
 			register_activity_profile_user(request.user, 'Usuario '+project_data.user.email+' agregado al proyecto '+project.nombre_proyecto)
 			register_activity_project(request.user, project, 'Usuario '+project_data.user.email+' agregado al proyecto '+project.nombre_proyecto)
-			register_notification(project_data.user, 'fa-users', 'El administrador '+request.user.email+' te ha agregado al proyecto <a href="/project/'+str(project.pk)+'/'+project.tag_url+'/">'+project.nombre_proyecto+'</a>')
+			register_notification(request.META['HTTP_HOST'], project_data.user, 'fa-users', 'El administrador '+request.user.email+' te ha agregado al proyecto <a href="/project/'+str(project.pk)+'/'+project.tag_url+'/">'+project.nombre_proyecto+'</a>')
 		return HttpResponseRedirect(reverse('list_role', kwargs={'pk': project.pk, 'tag_url': project.tag_url}))
 	else:
 		form = AddUserProjectForm(instance = project)

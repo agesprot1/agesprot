@@ -41,5 +41,28 @@ class AddUserProjectForm(forms.ModelForm):
 		project = kwargs.pop('instance', None)
 		user_list = [x.user.pk for x in Roles_project.objects.filter(proyecto = project.pk)]
 		super(AddUserProjectForm, self).__init__(*args, **kwargs)
-		self.fields['user'] = forms.ChoiceField(label = "Usuario", choices = [('', 'Seleccione un usuario')]+[(x.pk, x.first_name+" "+x.last_name+" - "+x.email) for x in User.objects.exclude(pk__in = user_list).distinct()], widget = forms.Select(attrs = {'class': 'form-control chosen', 'required': True}))
+		self.fields['user'] = forms.ChoiceField(label = "Usuario", choices = [('', 'Seleccione un usuario')]+[(x.pk, x.first_name+" "+x.last_name+" - "+x.email) for x in User.objects.exclude(pk__in = user_list).distinct()], widget = forms.Select(attrs = {'class': 'form-control', 'required': True}))
+		self.fields['role'] = forms.ChoiceField(label = "Rol", choices = [('', 'Seleccione un rol')]+[(x.pk, x.nombre_role) for x in Tipo_role.objects.all()], widget = forms.Select(attrs = {'class': 'form-control chosen', 'required': True}))
+
+class InvitationProjectForm(forms.ModelForm):
+	class Meta:
+		model = Invitation_project
+		fields = '__all__'
+		exclude = ['proyecto']
+		widgets = {
+			'email': EmailInput(attrs = {'class': 'form-control', 'required': True}),
+			'nombre': TextInput(attrs = {'class': 'form-control', 'required': True}),
+		}
+		labels = {
+			'email': 'Digite el correo electrónico',
+			'nombre': 'Digite nombre completo',
+		}
+
+	def clean_role(self):
+		return Tipo_role.objects.get(pk = self.cleaned_data.get('role'))
+
+	def __init__(self, *args, **kwargs):
+		email = kwargs.pop('email', None)
+		super(InvitationProjectForm, self).__init__(*args, **kwargs)
+		self.fields['email'].initial = email
 		self.fields['role'] = forms.ChoiceField(label = "Rol", choices = [('', 'Seleccione un rol')]+[(x.pk, x.nombre_role) for x in Tipo_role.objects.all()], widget = forms.Select(attrs = {'class': 'form-control chosen', 'required': True}))

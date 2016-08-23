@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+from agesprot.apps.project.models import *
 from django.forms import *
 from django import forms
 from .models import *
@@ -78,6 +79,11 @@ class UserForm(forms.Form):
 		user.save()
 		profile = ProfileUser(user = user, foto = foto)
 		profile.save()
+		projects = Invitation_project.objects.all()
+		if projects.filter(email = email).count() > 0:
+			project_save = projects.filter(email = email)[0]
+			role = Roles_project(user = user, proyecto = project_save.proyecto, role = project_save.role)
+			role.save()
 
 class ChangePasswordForm(forms.Form):
 	old_password = forms.CharField(label = 'Contraseña antigua', widget = forms.PasswordInput(attrs = {'class': 'form-control', 'minlength': 8, 'required': True}))

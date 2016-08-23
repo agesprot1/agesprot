@@ -38,7 +38,6 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'mail_templated',
-	'djcelery',
 	'agesprot.apps.base',
 	'agesprot.apps.users',
 	'agesprot.apps.project',
@@ -82,7 +81,6 @@ AUTHENTICATION_BACKENDS = (
 	'agesprot.backends.EmailBackend',
 	'django.contrib.auth.backends.ModelBackend'
 )
-
 
 WSGI_APPLICATION = 'agesprot.wsgi.application'
 

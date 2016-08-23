@@ -41,7 +41,7 @@ class ResetPasswordRequestView(FormView):
 			user_email = form.cleaned_data["user_email"]
 			try:
 				user = User.objects.get(email = user_email)
-				app_send_email(user, request.META['HTTP_HOST'], 'Cambio de Contraseña', 'email/password_reset_subject.html')
+				app_send_email(user, request.META['HTTP_HOST'], 'Cambio de Contraseña', 'email/password_reset_subject.html', '')
 				register_activity_profile_user(user, 'Solicitud cambio de contraseña')
 				register_notification(request.META['HTTP_HOST'], user, 'fa fa-unlock', 'Solicitud Cambio de contraseña')
 				result = self.form_valid(form)

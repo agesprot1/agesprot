@@ -26,4 +26,24 @@
 </div>
 <script>
 	$('.chosen').chosen({width: "100%"});
+	$('#id_user').chosen({
+		width: "100%",
+		no_results_text: "No se encontro el usuario, desea enviar una invitación a: "
+	});
+	$("#id_user_chosen").on("click", ".no-results", function(){
+		var email = $('#id_user_chosen input').val();
+		if (!isValidEmailAddress(email)){
+			alert(email+' no es un email válido');
+		}else{
+			$('#Modal').load('/project/{{ project.pk }}/{{ project.tag_url }}/invitate/?email='+email,function(){
+				$('#Modal').modal({
+					show:true
+				});
+			});
+		}
+	});
+	function isValidEmailAddress(emailAddress) {
+		var pattern = new RegExp(/^(("[\w-+\s]+")|([\w-+]+(?:\.[\w-+]+)*)|("[\w-+\s]+")([\w-+]+(?:\.[\w-+]+)*))(@((?:[\w-+]+\.)*\w[\w-+]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][\d]\.|1[\d]{2}\.|[\d]{1,2}\.))((25[0-5]|2[0-4][\d]|1[\d]{2}|[\d]{1,2})\.){2}(25[0-5]|2[0-4][\d]|1[\d]{2}|[\d]{1,2})\]?$)/i);
+		return pattern.test(emailAddress);
+	};
 </script>
